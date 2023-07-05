@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.border.Border;
@@ -17,7 +16,6 @@ public class WhiteBoard extends JFrame {
     private String userName;
     private DrawBoard drawBoard;
     private JTextArea chatArea;
-    private RemoteDrawBoard remoteDrawBoard;
 
     public WhiteBoard(String userName) {
 
@@ -31,23 +29,11 @@ public class WhiteBoard extends JFrame {
         add(controlPanel, BorderLayout.WEST);
         add(chatPanel, BorderLayout.EAST);
 
-        remoteDrawBoard = createRemoteCanvas();
-
         setJMenuBar(createMenuBar());
         setSize(1100, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-    }
-
-    private RemoteDrawBoard createRemoteCanvas(){
-        try {
-            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard();
-            remoteCanvas.setDrawBoard(this.drawBoard);
-            return remoteCanvas;
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private JPanel createControlPanel() {
@@ -235,6 +221,10 @@ public class WhiteBoard extends JFrame {
         controlMenu.add(newItem);
         controlMenu.add(closeItem);
         return controlMenu;
+    }
+
+    public RemoteDrawBoard getRemoteDrawBoard(){
+        return drawBoard.getRemoteDrawBoard();
     }
 
     public DrawBoard getDrawBoard() {

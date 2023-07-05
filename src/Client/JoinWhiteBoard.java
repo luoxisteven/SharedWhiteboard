@@ -1,5 +1,6 @@
 package Client;
 
+import RMI.IRemoteDrawBoard;
 import RMI.IRemoteMsg;
 import Whiteboard.WhiteBoard;
 
@@ -34,13 +35,17 @@ public class JoinWhiteBoard {
     }
 
     public void init(){
-//        WhiteBoard whiteBoard = new WhiteBoard(userName);
-        ClientInternet clientInternet = new ClientInternet();
+//        ClientInternet clientInternet = new ClientInternet();
 
         try {
+            WhiteBoard whiteBoard = new WhiteBoard(userName);
             Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
             IRemoteMsg remoteMsg = (IRemoteMsg) registry.lookup("Msg");
             System.out.println(remoteMsg.getMsg());
+            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) registry.lookup("DrawBoard");
+//            remoteDrawBoard.getDrawBoard();
+//            whiteBoard.getRemoteDrawBoard().setDrawBoard(remoteDrawBoard.getDrawBoard());
+
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         } catch (NotBoundException e) {

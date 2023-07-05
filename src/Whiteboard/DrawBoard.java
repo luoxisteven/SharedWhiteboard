@@ -1,6 +1,6 @@
 package Whiteboard;
 
-import RMI.RemoteCanvas;
+import RMI.RemoteDrawBoard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,12 +29,12 @@ public class DrawBoard extends JPanel {
     private List<Point> textPoints = new ArrayList<>();
     Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
-    private RemoteCanvas remoteCanvas;
+    private RemoteDrawBoard remoteDrawBoard;
 
     public DrawBoard() {
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-
+        this.remoteDrawBoard = createRemoteDrawBoard();
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 x1 = e.getX();
@@ -175,6 +175,16 @@ public class DrawBoard extends JPanel {
         }
     }
 
+    private RemoteDrawBoard createRemoteDrawBoard(){
+        try {
+            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard();
+            remoteCanvas.setDrawBoard(this);
+            return remoteCanvas;
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void clearWhiteboard() {
         shapes.clear(); // Remove all shapes
         shapeColors.clear(); // Remove all shape colors
@@ -185,7 +195,7 @@ public class DrawBoard extends JPanel {
         repaint(); // Refresh the panel to reflect the changes
     };
 
-    public void transferCanvas(DrawBoard drawBoard){
+    public void transferDrawBoard(DrawBoard drawBoard){
         this.shapes = drawBoard.getShapes();
         this.shapeColors = drawBoard.getShapeColors();
         this.texts = drawBoard.getTexts();
@@ -233,5 +243,9 @@ public class DrawBoard extends JPanel {
 
     public void setCurrentFontSize(int size) {
         this.currentFontSize = size;
+    }
+
+    public RemoteDrawBoard getRemoteDrawBoard() {
+        return remoteDrawBoard;
     }
 }
