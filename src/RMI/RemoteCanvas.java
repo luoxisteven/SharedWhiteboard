@@ -1,5 +1,7 @@
 package RMI;
 
+import Whiteboard.WhiteBoard;
+
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -8,10 +10,11 @@ import java.util.List;
 
 public class RemoteCanvas extends UnicastRemoteObject implements IRemoteCanvas {
 
+    private WhiteBoard whiteBoard;
     private Canvas canvas;
 
-    public RemoteCanvas(Canvas canvas) throws RemoteException {
-        this.canvas = canvas;
+    public RemoteCanvas(String userName) throws RemoteException {
+        this.whiteBoard = new WhiteBoard(userName);
     }
 
     @Override

@@ -1,9 +1,12 @@
 package Server;
 
+import RMI.IRemoteMsg;
 import RMI.RemoteCanvas;
+import RMI.RemoteMsg;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -35,14 +38,18 @@ public class CreateWhiteBoard {
     }
 
     public void init(){
-        WhiteBoard whiteBoard = new WhiteBoard(userName);
+//        WhiteBoard whiteBoard = new WhiteBoard(userName);
 //        RemoteCanvas remoteCanvas = new RemoteCanvas(whiteBoard.getCanvas());
         try {
+            IRemoteMsg remoteMsg = new RemoteMsg();
             Registry registry = LocateRegistry.createRegistry(serverPort);
+            registry.bind("Msg", remoteMsg);
 //            registry.bind("Canvas", remoteCanvas);
         } catch (RemoteException e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
+        } catch (AlreadyBoundException e) {
+            throw new RuntimeException(e);
         }
 //        catch (AlreadyBoundException e) {
 //            throw new RuntimeException(e);

@@ -1,6 +1,12 @@
 package Client;
 
+import RMI.IRemoteMsg;
 import Whiteboard.WhiteBoard;
+
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class JoinWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
@@ -28,8 +34,18 @@ public class JoinWhiteBoard {
     }
 
     public void init(){
-        WhiteBoard whiteBoard = new WhiteBoard(userName);
+//        WhiteBoard whiteBoard = new WhiteBoard(userName);
         ClientInternet clientInternet = new ClientInternet();
+
+        try {
+            Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
+            IRemoteMsg remoteMsg = (IRemoteMsg) registry.lookup("Msg");
+            System.out.println(remoteMsg.getMsg());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        } catch (NotBoundException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

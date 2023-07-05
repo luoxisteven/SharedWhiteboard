@@ -221,10 +221,6 @@ public class WhiteBoard extends JFrame {
         return controlMenu;
     }
 
-    public Canvas getCanvas() {
-        return canvas;
-    }
-
     public static void main(String[] args){
         WhiteBoard whiteBoard = new WhiteBoard("Manager");
     }
