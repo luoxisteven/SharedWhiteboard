@@ -1,9 +1,12 @@
 package Whiteboard;
 
+import RMI.RemoteDrawBoard;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.border.Border;
@@ -12,26 +15,39 @@ import javax.swing.BorderFactory;
 public class WhiteBoard extends JFrame {
 
     private String userName;
-    private Canvas canvas;
+    private DrawBoard drawBoard;
     private JTextArea chatArea;
+    private RemoteDrawBoard remoteDrawBoard;
 
     public WhiteBoard(String userName) {
 
         this.userName = userName;
         setTitle("Shared Whiteboard Server: " + userName);
 
-        canvas = new Canvas();
+        drawBoard = new DrawBoard();
         JPanel controlPanel = createControlPanel();
         JPanel chatPanel = createChatPanel();
-        add(canvas);
+        add(drawBoard);
         add(controlPanel, BorderLayout.WEST);
         add(chatPanel, BorderLayout.EAST);
+
+        remoteDrawBoard = createRemoteCanvas();
 
         setJMenuBar(createMenuBar());
         setSize(1100, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private RemoteDrawBoard createRemoteCanvas(){
+        try {
+            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard();
+            remoteCanvas.setDrawBoard(this.drawBoard);
+            return remoteCanvas;
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private JPanel createControlPanel() {
@@ -59,7 +75,7 @@ public class WhiteBoard extends JFrame {
     private JButton createButton(String label) {
         JButton button = new JButton(label);
         button.setMaximumSize(new Dimension(100, 30));
-        button.addActionListener(e -> canvas.setShape(e.getActionCommand()));
+        button.addActionListener(e -> drawBoard.setShape(e.getActionCommand()));
         return button;
     }
 
@@ -86,13 +102,13 @@ public class WhiteBoard extends JFrame {
 
             JButton okButton = new JButton("OK");
             okButton.addActionListener(e1 -> {
-                canvas.setTextField(inputField.getText());
+                drawBoard.setTextField(inputField.getText());
                 try {
                     int fontSize = Integer.parseInt(fontSizeField.getText());
                     if (fontSize <= 0) {
                         throw new NumberFormatException("Font size should be a positive number.");
                     }
-                    canvas.setCurrentFontSize(fontSize);
+                    drawBoard.setCurrentFontSize(fontSize);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Invalid font size.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -105,7 +121,7 @@ public class WhiteBoard extends JFrame {
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
 
-            canvas.setShape(e.getActionCommand());
+            drawBoard.setShape(e.getActionCommand());
         });
         return textButton;
     }
@@ -116,9 +132,9 @@ public class WhiteBoard extends JFrame {
         colorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color newColor = JColorChooser.showDialog(null, "Choose a color", canvas.getCurrentColor());
+                Color newColor = JColorChooser.showDialog(null, "Choose a color", drawBoard.getCurrentColor());
                 if (newColor != null) {
-                    canvas.setCurrentColor(newColor); // Use the new setter here
+                    drawBoard.setCurrentColor(newColor); // Use the new setter here
                 }
             }
         });
@@ -204,7 +220,7 @@ public class WhiteBoard extends JFrame {
         newItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                canvas.clearWhiteboard(); // Clear the whiteboard
+                drawBoard.clearWhiteboard(); // Clear the whiteboard
             }
         });
 
@@ -219,6 +235,10 @@ public class WhiteBoard extends JFrame {
         controlMenu.add(newItem);
         controlMenu.add(closeItem);
         return controlMenu;
+    }
+
+    public DrawBoard getDrawBoard() {
+        return drawBoard;
     }
 
     public static void main(String[] args){

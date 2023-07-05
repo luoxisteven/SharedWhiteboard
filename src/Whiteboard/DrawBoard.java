@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-class Canvas extends JPanel {
+public class DrawBoard extends JPanel {
     private int x1, y1, x2, y2;
     private String shape = "Pencil";
     private JTextField textField = new JTextField();
@@ -31,7 +31,7 @@ class Canvas extends JPanel {
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private RemoteCanvas remoteCanvas;
 
-    public Canvas() {
+    public DrawBoard() {
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 
@@ -185,13 +185,13 @@ class Canvas extends JPanel {
         repaint(); // Refresh the panel to reflect the changes
     };
 
-    public void transferCanvas(Canvas Canvas){
-        this.shapes = Canvas.getShapes();
-        this.shapeColors = Canvas.getShapeColors();
-        this.texts = Canvas.getTexts();
-        this.textPoints = Canvas.getTextPoints();
-        this.textColors = Canvas.getTextColors();
-        this.textFontSizes = Canvas.getTextFontSizes();
+    public void transferCanvas(DrawBoard drawBoard){
+        this.shapes = drawBoard.getShapes();
+        this.shapeColors = drawBoard.getShapeColors();
+        this.texts = drawBoard.getTexts();
+        this.textPoints = drawBoard.getTextPoints();
+        this.textColors = drawBoard.getTextColors();
+        this.textFontSizes = drawBoard.getTextFontSizes();
         repaint();
     }
 
