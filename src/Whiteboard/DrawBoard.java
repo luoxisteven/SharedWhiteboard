@@ -35,6 +35,7 @@ public class DrawBoard extends JPanel {
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         this.remoteDrawBoard = createRemoteDrawBoard();
+
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 x1 = e.getX();

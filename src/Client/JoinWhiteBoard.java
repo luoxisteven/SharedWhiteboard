@@ -43,7 +43,7 @@ public class JoinWhiteBoard {
             IRemoteMsg remoteMsg = (IRemoteMsg) registry.lookup("Msg");
             System.out.println(remoteMsg.getMsg());
             IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) registry.lookup("DrawBoard");
-//            remoteDrawBoard.getDrawBoard();
+            remoteDrawBoard.getDrawBoard();
 //            whiteBoard.getRemoteDrawBoard().setDrawBoard(remoteDrawBoard.getDrawBoard());
 
         } catch (RemoteException e) {

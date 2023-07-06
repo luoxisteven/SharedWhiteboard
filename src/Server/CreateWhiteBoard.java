@@ -2,6 +2,7 @@ package Server;
 
 import RMI.IRemoteDrawBoard;
 import RMI.IRemoteMsg;
+import RMI.RemoteDrawBoard;
 import RMI.RemoteMsg;
 import Whiteboard.WhiteBoard;
 
@@ -40,10 +41,11 @@ public class CreateWhiteBoard {
 //        RemoteCanvas remoteCanvas = new RemoteCanvas(whiteBoard.getCanvas());
         try {
             WhiteBoard whiteBoard = new WhiteBoard(userName);
-            IRemoteMsg remoteMsg = new RemoteMsg();
+            RemoteMsg remoteMsg = new RemoteMsg();
             Registry registry = LocateRegistry.createRegistry(serverPort);
             registry.bind("Msg", remoteMsg);
             registry.bind("DrawBoard", whiteBoard.getRemoteDrawBoard());
+//            registry.bind("DrawBoard", remoteDrawBoard);
         } catch (RemoteException e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
