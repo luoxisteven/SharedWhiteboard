@@ -1,16 +1,12 @@
 package Server;
 
-import RMI.IRemoteDrawBoard;
-import RMI.IRemoteMsg;
-import RMI.RemoteDrawBoard;
-import RMI.RemoteMsg;
+import RMI.*;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
 
 public class CreateWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
@@ -37,31 +33,14 @@ public class CreateWhiteBoard {
         }
     }
 
-    public void init(){
-//        RemoteCanvas remoteCanvas = new RemoteCanvas(whiteBoard.getCanvas());
-        try {
-            WhiteBoard whiteBoard = new WhiteBoard(userName);
-            RemoteMsg remoteMsg = new RemoteMsg();
-            Registry registry = LocateRegistry.createRegistry(serverPort);
-            registry.bind("Msg", remoteMsg);
-            registry.bind("DrawBoard", whiteBoard.getRemoteDrawBoard());
-//            registry.bind("DrawBoard", remoteDrawBoard);
-        } catch (RemoteException e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        } catch (AlreadyBoundException e) {
-            throw new RuntimeException(e);
-        }
-//        catch (AlreadyBoundException e) {
-//            throw new RuntimeException(e);
-//        }
-
+    public void createSever(){
+        Server server = new Server(serverAddress, serverPort, userName);
     }
 
     public static void main(String args[]) {
         CreateWhiteBoard createWhiteBoard = new CreateWhiteBoard();
         createWhiteBoard.parseArgs(args);
-        createWhiteBoard.init();
+        createWhiteBoard.createSever();
     }
 
 }

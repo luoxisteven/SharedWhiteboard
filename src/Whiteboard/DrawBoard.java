@@ -57,12 +57,14 @@ public class DrawBoard extends JPanel {
                 if (shape.equals("Pencil")) {
                     shapes.add(new Line2D.Float(x1, y1, x2, y2));
                     shapeColors.add(currentColor);
+                    copyLocalToRemote();
                     repaint();
                     x1 = x2;
                     y1 = y2;
                 } else if (shape.equals("Eraser")) {
                     eraseShape(new Point(x2, y2));
-                    repaint();
+                    copyLocalToRemote();
+                    repaint ();
                 } else {
                     draw();
                 }
@@ -181,7 +183,7 @@ public class DrawBoard extends JPanel {
 
     private RemoteDrawBoard createRemoteDrawBoard(){
         try {
-            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard();
+            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard(this);
             return remoteCanvas;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
@@ -194,47 +196,16 @@ public class DrawBoard extends JPanel {
         remoteDrawBoard.setTexts(texts);
         remoteDrawBoard.setTextColors(textColors);
         remoteDrawBoard.setTextFontSizes(textFontSizes);
-        remoteDrawBoard.setTextFontSizes(textFontSizes);
+        remoteDrawBoard.setTextPoints(textPoints);
     }
 
-//    public void copyRemoteToLocal(IRemoteDrawBoard remoteDrawBoard){
-//        try {
-//            this.shapes = remoteDrawBoard.getShapes();
-//            this.shapeColors = remoteDrawBoard.getShapeColors();
-//            this.texts = remoteDrawBoard.getTexts();
-//            this.textColors = remoteDrawBoard.getTextColors();
-//            this.textPoints = remoteDrawBoard.getTextPoints();
-//            this.textFontSizes = remoteDrawBoard.getTextFontSizes();
-//        } catch (RemoteException e) {
-//            throw new RuntimeException(e);
-//        }
-//        repaint();
-//    }
-
-
-    public void copyRemoteToLocal(IRemoteDrawBoard remoteDrawBoard){
-        try {
-            if(remoteDrawBoard.getShapes().size() > 0){
-                this.shapes = remoteDrawBoard.getShapes();
-            }
-            if(remoteDrawBoard.getShapeColors().size() > 0){
-                this.shapeColors = remoteDrawBoard.getShapeColors();
-            }
-            if(remoteDrawBoard.getTexts().size() > 0){
-                this.texts = remoteDrawBoard.getTexts();
-            }
-            if(remoteDrawBoard.getTextColors().size() > 0){
-                this.textColors = remoteDrawBoard.getTextColors();
-            }
-            if(remoteDrawBoard.getTextPoints().size() > 0){
-                this.textPoints = remoteDrawBoard.getTextPoints();
-            }
-            if(remoteDrawBoard.getTextFontSizes().size() > 0){
-                this.textFontSizes = remoteDrawBoard.getTextFontSizes();
-            }
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+    public void copyRemoteToLocal(RemoteDrawBoard remoteDrawBoard){
+        this.shapes = remoteDrawBoard.getShapes();
+        this.shapeColors = remoteDrawBoard.getShapeColors();
+        this.texts = remoteDrawBoard.getTexts();
+        this.textColors = remoteDrawBoard.getTextColors();
+        this.textPoints = remoteDrawBoard.getTextPoints();
+        this.textFontSizes = remoteDrawBoard.getTextFontSizes();
         repaint();
     }
 
@@ -246,17 +217,40 @@ public class DrawBoard extends JPanel {
         textColors.clear(); // Remove all text colors
         textFontSizes.clear();
         repaint(); // Refresh the panel to reflect the changes
-    };
+    }
 
-//    public void transferDrawBoard(DrawBoard drawBoard){
-//        this.shapes = drawBoard.getShapes();
-//        this.shapeColors = drawBoard.getShapeColors();
-//        this.texts = drawBoard.getTexts();
-//        this.textPoints = drawBoard.getTextPoints();
-//        this.textColors = drawBoard.getTextColors();
-//        this.textFontSizes = drawBoard.getTextFontSizes();
-//        repaint();
-//    }
+    public void remoteAddShape(Shape shape, Color color){
+        shapes.add(shape);
+        shapeColors.add(color);
+        repaint();
+    }
+
+    public void remoteAddText(String text, Point point, Color color, int fontsize){
+        texts.add(text);
+        textPoints.add(point);
+        textColors.add(color);
+        textFontSizes.add(fontsize);
+        repaint();
+    }
+
+    public void remoteDeleteShape(int index){
+        if (shapes.size()>index && shapeColors.size()>index){
+            shapes.remove(index);
+            shapeColors.remove(index);
+        }
+        repaint();
+    }
+
+    public void remoteDeleteText(int index){
+        if (texts.size()>index && textPoints.size()>index &&
+                textColors.size()>index && textFontSizes.size()>index){
+            texts.remove(index);
+            textPoints.remove(index);
+            textColors.remove(index);
+            textFontSizes.remove(index);
+        }
+        repaint();
+    }
 
     public List<Color> getShapeColors() {
         return shapeColors;

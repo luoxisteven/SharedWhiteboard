@@ -1,8 +1,6 @@
 package Client;
 
-import RMI.IRemoteDrawBoard;
-import RMI.IRemoteMsg;
-import RMI.RemoteDrawBoard;
+import RMI.*;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.NotBoundException;
@@ -41,10 +39,13 @@ public class JoinWhiteBoard {
         try {
             WhiteBoard whiteBoard = new WhiteBoard(userName);
             Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
-            IRemoteMsg remoteMsg = (IRemoteMsg) registry.lookup("Msg");
-            System.out.println(remoteMsg.getMsg());
-            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) registry.lookup("DrawBoard");
-            whiteBoard.getDrawBoard().copyRemoteToLocal(remoteDrawBoard);
+//            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) registry.lookup("DrawBoard");
+//            whiteBoard.getDrawBoard().copyRemoteToLocal(remoteDrawBoard);
+
+            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) new RemoteDrawBoard(whiteBoard.getDrawBoard());
+            IRemoteClient client = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
+            IRemoteUserControl userControl = (IRemoteUserControl) registry.lookup("UserControl");
+            userControl.register(userName, client, remoteDrawBoard);
 
         } catch (RemoteException e) {
             throw new RuntimeException(e);

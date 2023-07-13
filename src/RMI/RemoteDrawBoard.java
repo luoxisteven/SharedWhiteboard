@@ -18,8 +18,8 @@ public class RemoteDrawBoard extends UnicastRemoteObject implements IRemoteDrawB
     private List<Integer> textFontSizes = new ArrayList<>();
     private List<Point> textPoints = new ArrayList<>();
 
-    public RemoteDrawBoard() throws RemoteException {
-
+    public RemoteDrawBoard(DrawBoard drawBoard) throws RemoteException {
+        this.drawBoard = drawBoard;
     }
 
     @Override
