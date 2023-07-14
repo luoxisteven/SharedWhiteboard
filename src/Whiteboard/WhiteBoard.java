@@ -212,7 +212,7 @@ public class WhiteBoard extends JFrame implements Serializable {
         newItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawBoard.clearWhiteboard(); // Clear the whiteboard
+                drawBoard.clearDrawBoard(); // Clear the whiteboard
             }
         });
 

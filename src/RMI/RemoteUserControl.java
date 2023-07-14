@@ -96,6 +96,16 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
+    public void clearDrawBoard(ArrayList<String> userList) throws RemoteException {
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.clearDrawBoard();
+            }
+        }
+    }
+
+    @Override
     public ArrayList<String> getUserList() throws RemoteException {
         return userList;
     }

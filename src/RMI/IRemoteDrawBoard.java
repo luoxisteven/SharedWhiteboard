@@ -13,4 +13,5 @@ public interface IRemoteDrawBoard extends Remote {
     void deleteShape(String userName, int index) throws RemoteException;
     void deleteText(String userName, int index) throws RemoteException;
     void setRemoteUserControl(IRemoteUserControl remoteUserControl) throws RemoteException;
+    void clearDrawBoard(String userName) throws RemoteException;
 }

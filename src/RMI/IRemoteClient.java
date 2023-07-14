@@ -13,4 +13,5 @@ public interface IRemoteClient extends Remote {
     void addText(String text, Point point, Color color, int fontsize) throws RemoteException;
     void deleteShape(int index) throws RemoteException;
     void deleteText(int index) throws RemoteException;
+    void clearDrawBoard() throws RemoteException;
 }

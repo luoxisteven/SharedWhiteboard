@@ -16,4 +16,5 @@ public interface IRemoteUserControl extends Remote {
                  ArrayList<String> userList) throws RemoteException;
     void deleteShape(int index, ArrayList<String> userList) throws RemoteException;
     void deleteText(int index, ArrayList<String> userList) throws RemoteException;
+    void clearDrawBoard(ArrayList<String> userList) throws RemoteException;
 }

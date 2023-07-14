@@ -37,10 +37,14 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     public void deleteShape(int index) throws RemoteException{
         drawBoard.remoteDeleteShape(index);
     }
-    
+
     @Override
     public void deleteText(int index) throws RemoteException{
         drawBoard.remoteDeleteText(index);
     }
 
+    @Override
+    public void clearDrawBoard() throws RemoteException{
+        drawBoard.clearDrawBoard();
+    }
 }

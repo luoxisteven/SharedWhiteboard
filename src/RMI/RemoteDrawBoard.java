@@ -80,6 +80,19 @@ public class RemoteDrawBoard extends UnicastRemoteObject implements IRemoteDrawB
     }
 
     @Override
+    public void clearDrawBoard(String userName) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.clearDrawBoard();
+        }
+        ArrayList<String> userList = new ArrayList<>();
+        userList.addAll(remoteUserControl.getUserList());
+        if (userList.contains(userName)){
+            userList.remove(userName);
+        }
+        remoteUserControl.clearDrawBoard(userList);
+    }
+
+    @Override
     public void setRemoteUserControl(IRemoteUserControl remoteUserControl){
         this.remoteUserControl = remoteUserControl;
     }

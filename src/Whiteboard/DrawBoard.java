@@ -188,8 +188,7 @@ public class DrawBoard extends JPanel implements Serializable {
                 }
             }
             repaint ();
-        }
-        catch (RemoteException e) {
+        } catch (RemoteException e) {
                 throw new RuntimeException(e);
         }
     }
@@ -233,14 +232,21 @@ public class DrawBoard extends JPanel implements Serializable {
         repaint();
     }
 
-    public void clearWhiteboard() {
-        shapes.clear(); // Remove all shapes
-        shapeColors.clear(); // Remove all shape colors
-        texts.clear(); // Remove all texts
-        textPoints.clear(); // Remove all text positions
-        textColors.clear(); // Remove all text colors
-        textFontSizes.clear();
-        repaint(); // Refresh the panel to reflect the changes
+    public void clearDrawBoard() {
+        try {
+            if (remoteDrawBoard!=null){
+                remoteDrawBoard.clearDrawBoard(userName);
+            }
+            shapes.clear(); // Remove all shapes
+            shapeColors.clear(); // Remove all shape colors
+            texts.clear(); // Remove all texts
+            textPoints.clear(); // Remove all text positions
+            textColors.clear(); // Remove all text colors
+            textFontSizes.clear();
+            repaint(); // Refresh the panel to reflect the changes
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void remoteAddShape(Shape shape, Color color){
