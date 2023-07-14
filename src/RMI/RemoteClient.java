@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
-
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
 
@@ -18,25 +17,28 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void retrieveMessage(String message) throws RemoteException {
+    public void retrieveMessage(String message) throws RemoteException{
         System.out.println("New message: " + message);
     }
 
-    public void initiateCanvas(RemoteDrawBoard remoteDrawBoard) throws RemoteException{
-        drawBoard.copyRemoteToLocal(remoteDrawBoard);
+    @Override
+    public void initiateCanvas(DrawBoard drawBoard) throws RemoteException{
+        this.drawBoard.copyDrawBoard(drawBoard);
     }
-
+    @Override
     public void addShape(Shape shape, Color color) throws RemoteException{
         drawBoard.remoteAddShape(shape, color);
     }
-
+    @Override
     public void addText(String text, Point point, Color color, int fontsize) throws RemoteException{
         drawBoard.remoteAddText(text, point, color, fontsize);
     }
-
+    @Override
     public void deleteShape(int index) throws RemoteException{
         drawBoard.remoteDeleteShape(index);
     }
+    
+    @Override
     public void deleteText(int index) throws RemoteException{
         drawBoard.remoteDeleteText(index);
     }

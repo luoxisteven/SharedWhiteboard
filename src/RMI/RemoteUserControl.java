@@ -16,7 +16,7 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
-    private Map<String, IRemoteDrawBoard> drawBoardMap = new HashMap<>();
+
 
     public RemoteUserControl(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
         this.whiteBoard = whiteBoard;
@@ -24,15 +24,15 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
-    public void register(String userName, IRemoteClient client, IRemoteDrawBoard remoteDrawBoard) throws RemoteException {
+    public void register(String userName, IRemoteClient client) throws RemoteException {
         if (!userList.contains(userName)){
             userList.add(userName);
             clientMap.put(userName, client);
-            drawBoardMap.put(userName, remoteDrawBoard);
             initiateDrawBoard(userName);
         }
     }
 
+    @Override
     public void unicastMessage(String userName, String message) throws RemoteException {
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
@@ -40,33 +40,33 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
         }
     }
 
+    @Override
     public void broadcastMessage(String message) throws RemoteException {
         for (String userName : userList) {
             unicastMessage(userName, message);
         }
     }
-
+    @Override
     public void initiateDrawBoard(String userName) throws RemoteException{
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
-//            client.retrieveMessage("abc");
-//            whiteBoard.getRemoteDrawBoard();
-            client.initiateCanvas(whiteBoard.getRemoteDrawBoard());
+            client.initiateCanvas(drawBoard);
         }
     }
 
+    @Override
     public void addShape(Shape shape, Color color) throws RemoteException{
         drawBoard.remoteAddShape(shape, color);
     }
-
+    @Override
     public void addText(String text, Point point, Color color, int fontsize) throws RemoteException{
         drawBoard.remoteAddText(text, point, color, fontsize);
     }
-
+    @Override
     public void deleteShape(int index) throws RemoteException{
         drawBoard.remoteDeleteShape(index);
     }
-
+    @Override
     public void deleteText(int index) throws RemoteException{
         drawBoard.remoteDeleteText(index);
     }

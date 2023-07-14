@@ -11,11 +11,13 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawBoard extends JPanel {
+public class DrawBoard extends JPanel implements Serializable {
     private int x1, y1, x2, y2;
     private String shape = "Pencil";
     private JTextField textField = new JTextField();
@@ -28,9 +30,9 @@ public class DrawBoard extends JPanel {
     private java.util.List<String> texts = new ArrayList<>();
     private java.util.List<Integer> textFontSizes = new ArrayList<>();
     private List<Point> textPoints = new ArrayList<>();
-    Graphics2D g2;
+    private transient Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
-    private RemoteDrawBoard remoteDrawBoard;
+    private IRemoteDrawBoard remoteDrawBoard;
 
     public DrawBoard() {
 
@@ -57,13 +59,11 @@ public class DrawBoard extends JPanel {
                 if (shape.equals("Pencil")) {
                     shapes.add(new Line2D.Float(x1, y1, x2, y2));
                     shapeColors.add(currentColor);
-                    copyLocalToRemote();
                     repaint();
                     x1 = x2;
                     y1 = y2;
                 } else if (shape.equals("Eraser")) {
                     eraseShape(new Point(x2, y2));
-                    copyLocalToRemote();
                     repaint ();
                 } else {
                     draw();
@@ -115,7 +115,6 @@ public class DrawBoard extends JPanel {
                 texts.add(textField.getText());
                 textPoints.add(new Point(x1, y1));
                 textFontSizes.add(currentFontSize);
-                copyLocalToRemote();
                 break;
         }
         repaint();
@@ -127,7 +126,6 @@ public class DrawBoard extends JPanel {
             shapes.add(tempShape);
             tempShape = null;
         }
-        copyLocalToRemote();
         repaint();
     }
 
@@ -181,31 +179,22 @@ public class DrawBoard extends JPanel {
         }
     }
 
-    private RemoteDrawBoard createRemoteDrawBoard(){
+    private IRemoteDrawBoard createRemoteDrawBoard(){
         try {
-            RemoteDrawBoard remoteCanvas = new RemoteDrawBoard(this);
-            return remoteCanvas;
+            IRemoteDrawBoard remoteDrawBoard = new RemoteDrawBoard(this);
+            return remoteDrawBoard;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void copyLocalToRemote(){
-        remoteDrawBoard.setShapes(shapes);
-        remoteDrawBoard.setShapeColors(shapeColors);
-        remoteDrawBoard.setTexts(texts);
-        remoteDrawBoard.setTextColors(textColors);
-        remoteDrawBoard.setTextFontSizes(textFontSizes);
-        remoteDrawBoard.setTextPoints(textPoints);
-    }
-
-    public void copyRemoteToLocal(RemoteDrawBoard remoteDrawBoard){
-        this.shapes = remoteDrawBoard.getShapes();
-        this.shapeColors = remoteDrawBoard.getShapeColors();
-        this.texts = remoteDrawBoard.getTexts();
-        this.textColors = remoteDrawBoard.getTextColors();
-        this.textPoints = remoteDrawBoard.getTextPoints();
-        this.textFontSizes = remoteDrawBoard.getTextFontSizes();
+    public void copyDrawBoard(DrawBoard drawBoard){
+        this.shapes = drawBoard.getShapes();
+        this.shapeColors = drawBoard.getShapeColors();
+        this.texts = drawBoard.getTexts();
+        this.textColors = drawBoard.getTextColors();
+        this.textPoints = drawBoard.getTextPoints();
+        this.textFontSizes = drawBoard.getTextFontSizes();
         repaint();
     }
 
@@ -292,7 +281,12 @@ public class DrawBoard extends JPanel {
         this.currentFontSize = size;
     }
 
-    public RemoteDrawBoard getRemoteDrawBoard() {
+    public IRemoteDrawBoard getRemoteDrawBoard() {
         return remoteDrawBoard;
     }
+//    private void readObject(java.io.ObjectInputStream in)
+//            throws IOException, ClassNotFoundException {
+//        in.defaultReadObject();
+//        this.g2 = (Graphics2D) this.getGraphics();  // 重新初始化g2
+//    }
 }

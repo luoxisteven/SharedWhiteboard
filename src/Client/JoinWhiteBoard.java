@@ -39,13 +39,12 @@ public class JoinWhiteBoard {
         try {
             WhiteBoard whiteBoard = new WhiteBoard(userName);
             Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
-//            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) registry.lookup("DrawBoard");
+//            IremoteDrawBoard remoteDrawBoard = (IremoteDrawBoard) registry.lookup("DrawBoard");
 //            whiteBoard.getDrawBoard().copyRemoteToLocal(remoteDrawBoard);
 
-            IRemoteDrawBoard remoteDrawBoard = (IRemoteDrawBoard) new RemoteDrawBoard(whiteBoard.getDrawBoard());
             IRemoteClient client = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
             IRemoteUserControl userControl = (IRemoteUserControl) registry.lookup("UserControl");
-            userControl.register(userName, client, remoteDrawBoard);
+            userControl.register(userName, client);
 
         } catch (RemoteException e) {
             throw new RuntimeException(e);

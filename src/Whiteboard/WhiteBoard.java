@@ -1,17 +1,19 @@
 package Whiteboard;
 
+import RMI.IRemoteDrawBoard;
 import RMI.RemoteDrawBoard;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.border.Border;
 import javax.swing.BorderFactory;
 
-public class WhiteBoard extends JFrame {
+public class WhiteBoard extends JFrame implements Serializable {
 
     private String userName;
     private DrawBoard drawBoard;
@@ -223,7 +225,7 @@ public class WhiteBoard extends JFrame {
         return controlMenu;
     }
 
-    public RemoteDrawBoard getRemoteDrawBoard(){
+    public IRemoteDrawBoard getRemoteDrawBoard(){
         return drawBoard.getRemoteDrawBoard();
     }
 

@@ -1,11 +1,13 @@
 package Server;
 
+import RMI.IRemoteDrawBoard;
 import RMI.IRemoteUserControl;
 import RMI.RemoteDrawBoard;
 import RMI.RemoteUserControl;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,15 +20,20 @@ public class Server{
     private String userName;
     private WhiteBoard whiteBoard;
     private Registry registry;
-    private RemoteDrawBoard remoteDrawBoard;
+    private IRemoteDrawBoard remoteDrawBoard;
     private RemoteUserControl remoteUserControl;
 
     public Server(String serverAddress, int serverPort, String userName){
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.userName = userName;
-        whiteBoard = new WhiteBoard(userName);
-        internet();
+        this.createWhiteboard();
+        this.internet();
+    }
+
+    public void createWhiteboard(){
+        this.whiteBoard = new WhiteBoard(userName);
+        this.remoteDrawBoard = whiteBoard.getRemoteDrawBoard();
     }
 
     public void internet(){
@@ -35,6 +42,7 @@ public class Server{
             registry = LocateRegistry.createRegistry(serverPort);
             remoteUserControl = new RemoteUserControl(whiteBoard,whiteBoard.getDrawBoard());
             registry.bind("UserControl", remoteUserControl);
+            registry.bind("ServerBoard", remoteDrawBoard);
 
 //            registry.bind("DrawBoard", remoteDrawBoard);
 
