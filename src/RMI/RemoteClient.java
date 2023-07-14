@@ -45,6 +45,6 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
 
     @Override
     public void clearDrawBoard() throws RemoteException{
-        drawBoard.clearDrawBoard();
+        drawBoard.remoteClearDrawBoard();
     }
 }

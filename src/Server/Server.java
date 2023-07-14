@@ -7,14 +7,11 @@ import RMI.RemoteUserControl;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.AlreadyBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-
 public class Server{
-
     private String serverAddress;
     private int serverPort;
     private String userName;
