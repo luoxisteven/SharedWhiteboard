@@ -1,7 +1,6 @@
 package Whiteboard;
 
 import RMI.IRemoteDrawBoard;
-import RMI.RemoteDrawBoard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,20 +17,25 @@ public class WhiteBoard extends JFrame implements Serializable {
     private String userName;
     private DrawBoard drawBoard;
     private JTextArea chatArea;
+    private int mode; // 0 is Server, 1 is Client
 
-    public WhiteBoard(String userName) {
+    public WhiteBoard(String userName, int mode) {
 
         this.userName = userName;
+        this.mode = mode;
         setTitle("Shared Whiteboard Server: " + userName);
 
-        drawBoard = new DrawBoard();
+        drawBoard = new DrawBoard(userName, mode);
         JPanel controlPanel = createControlPanel();
         JPanel chatPanel = createChatPanel();
         add(drawBoard);
         add(controlPanel, BorderLayout.WEST);
         add(chatPanel, BorderLayout.EAST);
 
-        setJMenuBar(createMenuBar());
+        if (mode==0){
+            setJMenuBar(createMenuBar());
+        }
+
         setSize(1100, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -234,7 +238,7 @@ public class WhiteBoard extends JFrame implements Serializable {
     }
 
     public static void main(String[] args){
-        WhiteBoard whiteBoard = new WhiteBoard("Manager");
+        WhiteBoard whiteBoard = new WhiteBoard("Manager", 0);
     }
 
 }

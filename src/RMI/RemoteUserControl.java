@@ -17,7 +17,6 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     private ArrayList<String> userList = new ArrayList<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
 
-
     public RemoteUserControl(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
         this.whiteBoard = whiteBoard;
         this.drawBoard = drawBoard;
@@ -46,6 +45,7 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
             unicastMessage(userName, message);
         }
     }
+
     @Override
     public void initiateDrawBoard(String userName) throws RemoteException{
         IRemoteClient client = clientMap.get(userName);
@@ -55,20 +55,44 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
-    public void addShape(Shape shape, Color color) throws RemoteException{
-        drawBoard.remoteAddShape(shape, color);
+    public void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.addShape(shape, color);
+            }
+        }
     }
+
     @Override
-    public void addText(String text, Point point, Color color, int fontsize) throws RemoteException{
-        drawBoard.remoteAddText(text, point, color, fontsize);
+    public void addText(String text, Point point, Color color, int fontsize,
+                        ArrayList<String> userList) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.addText(text, point, color, fontsize);
+            }
+        }
     }
+
     @Override
-    public void deleteShape(int index) throws RemoteException{
-        drawBoard.remoteDeleteShape(index);
+    public void deleteShape(int index, ArrayList<String> userList) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.deleteShape(index);
+            }
+        }
     }
+
     @Override
-    public void deleteText(int index) throws RemoteException{
-        drawBoard.remoteDeleteText(index);
+    public void deleteText(int index, ArrayList<String> userList) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.deleteText(index);
+            }
+        }
     }
 
     @Override

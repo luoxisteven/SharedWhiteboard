@@ -1,7 +1,7 @@
 package Whiteboard;
 
 import RMI.IRemoteDrawBoard;
-import RMI.RemoteDrawBoard;
+import RMI.IRemoteUserControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -33,11 +32,14 @@ public class DrawBoard extends JPanel implements Serializable {
     private transient Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private IRemoteDrawBoard remoteDrawBoard;
+    private IRemoteUserControl remoteUserControl;
+    private int mode;
+    private String userName;
 
-    public DrawBoard() {
-
+    public DrawBoard(String userName, int mode) {
+        this.userName = userName;
+        this.mode = mode;
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        this.remoteDrawBoard = createRemoteDrawBoard();
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -46,7 +48,7 @@ public class DrawBoard extends JPanel implements Serializable {
             }
 
             public void mouseReleased(MouseEvent e) {
-                if (!shape.equals("Pencil")) {
+                if (!shape.equals("Pencil") || !shape.equals("Eraser")) {
                     addShape();
                 }
             }
@@ -57,19 +59,15 @@ public class DrawBoard extends JPanel implements Serializable {
                 x2 = e.getX();
                 y2 = e.getY();
                 if (shape.equals("Pencil")) {
-                    shapes.add(new Line2D.Float(x1, y1, x2, y2));
-                    shapeColors.add(currentColor);
-                    repaint();
-                    x1 = x2;
-                    y1 = y2;
+                    pencilDraw();
                 } else if (shape.equals("Eraser")) {
                     eraseShape(new Point(x2, y2));
-                    repaint ();
                 } else {
                     draw();
                 }
             }
         });
+
         setBackground(Color.WHITE);
     }
 
@@ -111,42 +109,88 @@ public class DrawBoard extends JPanel implements Serializable {
                 tempShape = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
                 break;
             case "Text":
-                textColors.add(currentColor);
-                texts.add(textField.getText());
-                textPoints.add(new Point(x1, y1));
-                textFontSizes.add(currentFontSize);
+                addText();
                 break;
         }
         repaint();
     }
 
-    public void addShape() {
-        if (tempShape != null) {
+    private void pencilDraw(){
+        try {
+            if (remoteDrawBoard!=null){
+                remoteDrawBoard.addShape(userName,new Line2D.Float(x1, y1, x2, y2),currentColor);
+            }
+            shapes.add(new Line2D.Float(x1, y1, x2, y2));
             shapeColors.add(currentColor);
-            shapes.add(tempShape);
-            tempShape = null;
+            repaint();
+            x1 = x2;
+            y1 = y2;
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
-        repaint();
+    }
+
+    private void addShape() {
+        try {
+            if (remoteDrawBoard!=null){
+                remoteDrawBoard.addShape(userName,tempShape,currentColor);
+            }
+            if (tempShape != null) {
+                shapeColors.add(currentColor);
+                shapes.add(tempShape);
+                tempShape = null;
+                repaint();
+            }
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void addText(){
+        try {
+            if (remoteDrawBoard!=null){
+                remoteDrawBoard.addText(userName, textField.getText(),
+                        new Point(x1, y1), currentColor, currentFontSize);
+            }
+            textColors.add(currentColor);
+            texts.add(textField.getText());
+            textPoints.add(new Point(x1, y1));
+            textFontSizes.add(currentFontSize);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void eraseShape(Point point) {
-        for (int i = shapes.size() - 1; i >= 0; i--) {
-            if (shapes.get(i).contains(point) || isNearLine(shapes.get(i), point)) {
-                shapes.remove(i);
-                shapeColors.remove(i);
-                break;
+        try {
+            for (int i = shapes.size() - 1; i >= 0; i--) {
+                if (shapes.get(i).contains(point) || isNearLine(shapes.get(i), point)) {
+                    shapes.remove(i);
+                    shapeColors.remove(i);
+                    if (remoteDrawBoard != null) {
+                        remoteDrawBoard.deleteShape(userName, i);
+                    }
+                    break;
+                }
             }
+            for (int i = textPoints.size() - 1; i >= 0; i--) {
+                Rectangle textBound = new Rectangle(textPoints.get(i).x, textPoints.get(i).y - g2.getFontMetrics().getHeight(),
+                        g2.getFontMetrics().stringWidth(texts.get(i)), g2.getFontMetrics().getHeight());
+                if (textBound.contains(point)) {
+                    texts.remove(i);
+                    textPoints.remove(i);
+                    textColors.remove(i);
+                    textFontSizes.remove(i);
+                    if (remoteDrawBoard != null) {
+                        remoteDrawBoard.deleteText(userName, i);
+                    }
+                    break;
+                }
+            }
+            repaint ();
         }
-        for (int i = textPoints.size() - 1; i >= 0; i--) {
-            Rectangle textBound = new Rectangle(textPoints.get(i).x, textPoints.get(i).y - g2.getFontMetrics().getHeight(),
-                    g2.getFontMetrics().stringWidth(texts.get(i)), g2.getFontMetrics().getHeight());
-            if (textBound.contains(point)) {
-                texts.remove(i);
-                textPoints.remove(i);
-                textColors.remove(i);
-                textFontSizes.remove(i);
-                break;
-            }
+        catch (RemoteException e) {
+                throw new RuntimeException(e);
         }
     }
 
@@ -179,15 +223,6 @@ public class DrawBoard extends JPanel implements Serializable {
         }
     }
 
-    private IRemoteDrawBoard createRemoteDrawBoard(){
-        try {
-            IRemoteDrawBoard remoteDrawBoard = new RemoteDrawBoard(this);
-            return remoteDrawBoard;
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void copyDrawBoard(DrawBoard drawBoard){
         this.shapes = drawBoard.getShapes();
         this.shapeColors = drawBoard.getShapeColors();
@@ -209,9 +244,11 @@ public class DrawBoard extends JPanel implements Serializable {
     }
 
     public void remoteAddShape(Shape shape, Color color){
-        shapes.add(shape);
-        shapeColors.add(color);
-        repaint();
+        if(shape!=null) {
+            shapes.add(shape);
+            shapeColors.add(color);
+            repaint();
+        }
     }
 
     public void remoteAddText(String text, Point point, Color color, int fontsize){
@@ -284,9 +321,12 @@ public class DrawBoard extends JPanel implements Serializable {
     public IRemoteDrawBoard getRemoteDrawBoard() {
         return remoteDrawBoard;
     }
-//    private void readObject(java.io.ObjectInputStream in)
-//            throws IOException, ClassNotFoundException {
-//        in.defaultReadObject();
-//        this.g2 = (Graphics2D) this.getGraphics();  // 重新初始化g2
-//    }
+
+    public void setRemoteDrawBoard(IRemoteDrawBoard remoteDrawBoard) {
+        this.remoteDrawBoard = remoteDrawBoard;
+    }
+
+    public void setRemoteUserControl(IRemoteUserControl remoteUserControl){
+        this.remoteUserControl = remoteUserControl;
+    }
 }
