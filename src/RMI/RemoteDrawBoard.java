@@ -92,6 +92,7 @@ public class RemoteDrawBoard extends UnicastRemoteObject implements IRemoteDrawB
         remoteUserControl.clearDrawBoard(userList);
     }
 
+
     @Override
     public void setRemoteUserControl(IRemoteUserControl remoteUserControl){
         this.remoteUserControl = remoteUserControl;
