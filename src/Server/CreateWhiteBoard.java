@@ -1,13 +1,5 @@
 package Server;
 
-import RMI.*;
-import Whiteboard.WhiteBoard;
-
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
 public class CreateWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
     public static final int DEFAULT_PORT = 4444;
@@ -16,13 +8,13 @@ public class CreateWhiteBoard {
     private int serverPort;
     private String userName;
 
-    public CreateWhiteBoard(){
+    private CreateWhiteBoard(){
         serverAddress = DEFAULT_IP;
         serverPort = DEFAULT_PORT;
         userName = DEFAULT_USERNAME;
     }
 
-    public void parseArgs(String args[]) {
+    private void parseArgs(String args[]) {
         try {
             serverAddress = args[0];
             serverPort = Integer.parseInt(args[1]);
@@ -33,7 +25,7 @@ public class CreateWhiteBoard {
         }
     }
 
-    public void createSever(){
+    private void createSever(){
         Server server = new Server(serverAddress, serverPort, userName);
     }
 

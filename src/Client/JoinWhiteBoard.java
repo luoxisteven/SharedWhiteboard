@@ -15,14 +15,15 @@ public class JoinWhiteBoard {
     private String serverAddress;
     private int serverPort;
     private String userName;
+    public static final int mode = 1;
 
-    public JoinWhiteBoard(){
+    private JoinWhiteBoard(){
         serverAddress = DEFAULT_IP;
         serverPort = DEFAULT_PORT;
         userName = DEFAULT_USERNAME;
     }
 
-    public void parseArgs(String args[]) {
+    private void parseArgs(String args[]) {
         try {
             serverAddress = args[0];
             serverPort = Integer.parseInt(args[1]);
@@ -33,30 +34,36 @@ public class JoinWhiteBoard {
         }
     }
 
-    public void init(){
-
-        try {
-            WhiteBoard whiteBoard = new WhiteBoard(userName, 1);
-            Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
-
-            IRemoteClient remoteClient = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
-            IRemoteServer remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
-            remoteServer.register(userName, remoteClient);
-            whiteBoard.setRemoteServer(remoteServer);
-            whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
-
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
+    private void createClient(){
+        Client client = new Client(serverAddress,serverPort,userName);
     }
+
+
+
+//    public void init(){
+//
+//        try {
+//            WhiteBoard whiteBoard = new WhiteBoard(userName, mode);
+//            Registry registry = LocateRegistry.getRegistry(serverAddress,serverPort);
+//
+//            IRemoteClient remoteClient = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
+//            IRemoteServer remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
+//            remoteServer.register(userName, remoteClient);
+//            whiteBoard.setRemoteServer(remoteServer);
+//            whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
+//
+//        } catch (RemoteException e) {
+//            throw new RuntimeException(e);
+//        } catch (NotBoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     public static void main(String[] args){
         JoinWhiteBoard joinWhiteBoard = new JoinWhiteBoard();
         joinWhiteBoard.parseArgs(args);
-        joinWhiteBoard.init();
+        joinWhiteBoard.createClient();
     }
 
 }

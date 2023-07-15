@@ -15,25 +15,25 @@ public class Server{
     private WhiteBoard whiteBoard;
     private Registry registry;
     private RemoteServer remoteServer;
+    public static final int mode = 0;
 
     public Server(String serverAddress, int serverPort, String userName){
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.userName = userName;
         this.createWhiteboard();
-        this.internet();
+        this.createInternet();
     }
 
     public void createWhiteboard(){
-        this.whiteBoard = new WhiteBoard(userName, 0);
+        this.whiteBoard = new WhiteBoard(userName, mode);
     }
 
-    public void internet(){
+    public void createInternet(){
         try {
             System.setProperty("java.rmi.server.hostname",serverAddress);
             registry = LocateRegistry.createRegistry(serverPort);
             remoteServer = new RemoteServer(userName,whiteBoard);
-            remoteServer.getUserList().add(userName);
             whiteBoard.setRemoteServer(remoteServer);
             whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
             registry.bind("RemoteServer",(IRemoteServer) remoteServer);

@@ -22,6 +22,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         this.userName = userName;
         this.whiteBoard = whiteBoard;
         this.drawBoard = whiteBoard.getDrawBoard();
+        userList.add(userName);
     }
 
     @Override

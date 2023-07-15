@@ -285,6 +285,7 @@ public class DrawBoard extends JPanel implements Serializable {
         textFontSizes.clear();
         repaint();
     }
+
     public List<Color> getShapeColors() {
         return shapeColors;
     }
