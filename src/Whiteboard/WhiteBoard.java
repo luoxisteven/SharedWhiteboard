@@ -221,7 +221,6 @@ public class WhiteBoard extends JFrame implements Serializable {
 
     public JMenu createEditMenu(){
         JMenu controlMenu = new JMenu(" Edit ");
-
         JMenuItem newItem = new JMenuItem("New");
         newItem.addActionListener(new ActionListener() {
             @Override
@@ -243,8 +242,25 @@ public class WhiteBoard extends JFrame implements Serializable {
         return controlMenu;
     }
 
+    public void initiateChatBox(ArrayList<JSONObject> msgObjs){
+        this.msgObjs = msgObjs;
+        String chat = "";
+        for(JSONObject msgObj: msgObjs){
+            chat += msgObj.get("UserName")+" ("+msgObj.get("Time")+"): "+msgObj.get("Msg")+"\n\n";
+        }
+        chatArea.setText(chat);
+    }
+
     public IRemoteDrawBoard getRemoteDrawBoard(){
         return drawBoard.getRemoteDrawBoard();
+    }
+
+    public ArrayList<JSONObject> getMsgObjs() {
+        return msgObjs;
+    }
+
+    public void setMsgObjs(ArrayList<JSONObject> msgObjs) {
+        this.msgObjs = msgObjs;
     }
 
     public DrawBoard getDrawBoard() {

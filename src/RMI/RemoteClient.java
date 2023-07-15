@@ -2,6 +2,7 @@ package RMI;
 
 import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
+import org.json.simple.JSONObject;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -25,6 +26,11 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     @Override
     public void initiateCanvas(DrawBoard drawBoard) throws RemoteException{
         this.drawBoard.copyDrawBoard(drawBoard);
+    }
+
+    @Override
+    public void initiateChatBox(ArrayList<JSONObject> msgObjs) throws RemoteException{
+        this.whiteBoard.initiateChatBox(msgObjs);
     }
 
     @Override

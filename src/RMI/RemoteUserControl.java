@@ -12,12 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUserControl {
-
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
-    private ArrayList<JSObject> msgObjs = new ArrayList<>();
 
     public RemoteUserControl(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
         this.whiteBoard = whiteBoard;
@@ -30,6 +28,7 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
             userList.add(userName);
             clientMap.put(userName, client);
             initiateDrawBoard(userName);
+            initiateChatBox(userName);
         }
     }
 
@@ -54,6 +53,18 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
         if (client != null) {
             client.initiateCanvas(drawBoard);
         }
+    }
+
+    @Override
+    public void initiateChatBox(String userName) throws RemoteException{
+        IRemoteClient client = clientMap.get(userName);
+        if (client != null) {
+            client.initiateChatBox(whiteBoard.getMsgObjs());
+        }
+    }
+
+    public void addChat() throws RemoteException{
+
     }
 
     @Override

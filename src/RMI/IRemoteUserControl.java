@@ -11,7 +11,8 @@ public interface IRemoteUserControl extends Remote {
     void unicastMessage(String userName, String message) throws RemoteException;
     void broadcastMessage(String message) throws RemoteException;
     void initiateDrawBoard(String userName) throws RemoteException;
-    public void setUserList(String userName) throws RemoteException;
+    void initiateChatBox(String userName) throws RemoteException;
+    void setUserList(String userName) throws RemoteException;
     void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException;
     void addText(String text, Point point, Color color, int fontsize4,
                  ArrayList<String> userList) throws RemoteException;
