@@ -1,9 +1,6 @@
 package Server;
 
-import RMI.IRemoteDrawBoard;
-import RMI.IRemoteUserControl;
-import RMI.RemoteDrawBoard;
-import RMI.RemoteUserControl;
+import RMI.*;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.AlreadyBoundException;
@@ -17,8 +14,7 @@ public class Server{
     private String userName;
     private WhiteBoard whiteBoard;
     private Registry registry;
-    private IRemoteDrawBoard remoteDrawBoard;
-    private IRemoteUserControl remoteUserControl;
+    private IRemoteServer remoteServer;
 
     public Server(String serverAddress, int serverPort, String userName){
         this.serverAddress = serverAddress;
@@ -29,26 +25,17 @@ public class Server{
     }
 
     public void createWhiteboard(){
-        try {
-            this.whiteBoard = new WhiteBoard(userName, 0);
-            this.remoteDrawBoard = new RemoteDrawBoard(whiteBoard.getDrawBoard(), userName);
-            this.whiteBoard.getDrawBoard().setRemoteDrawBoard(this.remoteDrawBoard);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        this.whiteBoard = new WhiteBoard(userName, 0);
     }
 
     public void internet(){
         try {
             System.setProperty("java.rmi.server.hostname",serverAddress);
             registry = LocateRegistry.createRegistry(serverPort);
-            remoteUserControl = new RemoteUserControl(whiteBoard,whiteBoard.getDrawBoard());
-            registry.bind("UserControl", remoteUserControl);
-            registry.bind("ServerBoard", remoteDrawBoard);
-            remoteDrawBoard.setRemoteUserControl(remoteUserControl);
-            whiteBoard.getDrawBoard().setRemoteUserControl(remoteUserControl);
-            remoteUserControl.getUserList().add(userName);
-            System.out.println("Manger Name: "+remoteUserControl.getUserList().get(0));
+            remoteServer = new RemoteServer(userName,whiteBoard);
+            remoteServer.getUserList().add(userName);
+            whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
+            registry.bind("RemoteServer", remoteServer);
         } catch (RemoteException e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();

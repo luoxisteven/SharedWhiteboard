@@ -1,6 +1,6 @@
 package Whiteboard;
 
-import RMI.IRemoteDrawBoard;
+import RMI.*;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -16,11 +16,12 @@ import javax.swing.BorderFactory;
 
 public class WhiteBoard extends JFrame implements Serializable {
 
-    private String userName;
     private DrawBoard drawBoard;
     private JTextArea chatArea;
     private ArrayList<JSONObject> msgObjs = new ArrayList<JSONObject>();
+    private String userName;
     private int mode; // 0 is Server, 1 is Client
+    private IRemoteServer remoteServer;
 
     public WhiteBoard(String userName, int mode) {
 
@@ -249,10 +250,6 @@ public class WhiteBoard extends JFrame implements Serializable {
             chat += msgObj.get("UserName")+" ("+msgObj.get("Time")+"): "+msgObj.get("Msg")+"\n\n";
         }
         chatArea.setText(chat);
-    }
-
-    public IRemoteDrawBoard getRemoteDrawBoard(){
-        return drawBoard.getRemoteDrawBoard();
     }
 
     public ArrayList<JSONObject> getMsgObjs() {

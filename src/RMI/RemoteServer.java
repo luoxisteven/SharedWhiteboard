@@ -2,7 +2,6 @@ package RMI;
 
 import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
-import netscape.javascript.JSObject;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -11,15 +10,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUserControl {
+public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
+    private String userName;
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
 
-    public RemoteUserControl(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
+    public RemoteServer(String userName, WhiteBoard whiteBoard) throws RemoteException {
+        this.userName = userName;
         this.whiteBoard = whiteBoard;
-        this.drawBoard = drawBoard;
+        this.drawBoard = whiteBoard.getDrawBoard();
     }
 
     @Override
@@ -86,6 +87,16 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
+    public void userAddShape(String userName, Shape shape, Color color) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.remoteAddShape(shape,color);
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.addShape(shape, color, userList);
+    }
+
+    @Override
     public void addText(String text, Point point, Color color, int fontsize,
                         ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
@@ -94,6 +105,16 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
                 client.addText(text, point, color, fontsize);
             }
         }
+    }
+
+    @Override
+    public void userAddText(String userName, String text, Point point, Color color, int fontsize) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.remoteAddText(text, point, color, fontsize);
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.addText(text, point, color, fontsize, userList);
     }
 
     @Override
@@ -107,6 +128,16 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
+    public void userDeleteShape(String userName, int index) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.remoteDeleteShape(index);
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.deleteShape(index, userList);
+    }
+
+    @Override
     public void deleteText(int index, ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -114,6 +145,16 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
                 client.deleteText(index);
             }
         }
+    }
+
+    @Override
+    public void userDeleteText(String userName, int index) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.remoteDeleteText(index);
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.deleteText(index, userList);
     }
 
     @Override
@@ -127,12 +168,18 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     }
 
     @Override
-    public ArrayList<String> getUserList() throws RemoteException {
-        return userList;
+    public void userClearDrawBoard(String userName) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            drawBoard.remoteClearDrawBoard();
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.clearDrawBoard(userList);
     }
 
-    public IRemoteClient getClient(String userName) {
-        return clientMap.get(userName);
+    @Override
+    public ArrayList<String> getUserList() throws RemoteException {
+        return userList;
     }
 
 }

@@ -1,7 +1,6 @@
 package Whiteboard;
 
-import RMI.IRemoteDrawBoard;
-import RMI.IRemoteUserControl;
+import RMI.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,10 +30,9 @@ public class DrawBoard extends JPanel implements Serializable {
     private List<Point> textPoints = new ArrayList<>();
     private transient Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
-    private IRemoteDrawBoard remoteDrawBoard;
-    private IRemoteUserControl remoteUserControl;
-    private int mode;
     private String userName;
+    private int mode;
+    private IRemoteServer remoteServer;
 
     public DrawBoard(String userName, int mode) {
         this.userName = userName;
@@ -117,8 +115,8 @@ public class DrawBoard extends JPanel implements Serializable {
 
     private void pencilDraw(){
         try {
-            if (remoteDrawBoard!=null){
-                remoteDrawBoard.addShape(userName,new Line2D.Float(x1, y1, x2, y2),currentColor);
+            if (remoteServer!=null){
+                remoteServer.userAddShape(userName,new Line2D.Float(x1, y1, x2, y2),currentColor);
             }
             shapes.add(new Line2D.Float(x1, y1, x2, y2));
             shapeColors.add(currentColor);
@@ -132,8 +130,8 @@ public class DrawBoard extends JPanel implements Serializable {
 
     private void addShape() {
         try {
-            if (remoteDrawBoard!=null){
-                remoteDrawBoard.addShape(userName,tempShape,currentColor);
+            if (remoteServer!=null){
+                remoteServer.userAddShape(userName,tempShape,currentColor);
             }
             if (tempShape != null) {
                 shapeColors.add(currentColor);
@@ -148,8 +146,8 @@ public class DrawBoard extends JPanel implements Serializable {
 
     private void addText(){
         try {
-            if (remoteDrawBoard!=null){
-                remoteDrawBoard.addText(userName, textField.getText(),
+            if (remoteServer!=null){
+                remoteServer.userAddText(userName, textField.getText(),
                         new Point(x1, y1), currentColor, currentFontSize);
             }
             textColors.add(currentColor);
@@ -167,8 +165,8 @@ public class DrawBoard extends JPanel implements Serializable {
                 if (shapes.get(i).contains(point) || isNearLine(shapes.get(i), point)) {
                     shapes.remove(i);
                     shapeColors.remove(i);
-                    if (remoteDrawBoard != null) {
-                        remoteDrawBoard.deleteShape(userName, i);
+                    if (remoteServer != null) {
+                        remoteServer.userDeleteShape(userName, i);
                     }
                     break;
                 }
@@ -181,8 +179,8 @@ public class DrawBoard extends JPanel implements Serializable {
                     textPoints.remove(i);
                     textColors.remove(i);
                     textFontSizes.remove(i);
-                    if (remoteDrawBoard != null) {
-                        remoteDrawBoard.deleteText(userName, i);
+                    if (remoteServer != null) {
+                        remoteServer.userDeleteText(userName, i);
                     }
                     break;
                 }
@@ -234,8 +232,8 @@ public class DrawBoard extends JPanel implements Serializable {
 
     public void clearDrawBoard() {
         try {
-            if (remoteDrawBoard!=null){
-                remoteDrawBoard.clearDrawBoard(userName);
+            if (remoteServer!=null){
+                remoteServer.userClearDrawBoard(userName);
             }
             shapes.clear();
             shapeColors.clear();
@@ -333,15 +331,8 @@ public class DrawBoard extends JPanel implements Serializable {
         this.currentFontSize = size;
     }
 
-    public IRemoteDrawBoard getRemoteDrawBoard() {
-        return remoteDrawBoard;
+    public void setRemoteServer(IRemoteServer remoteServer) {
+        this.remoteServer = remoteServer;
     }
 
-    public void setRemoteDrawBoard(IRemoteDrawBoard remoteDrawBoard) {
-        this.remoteDrawBoard = remoteDrawBoard;
-    }
-
-    public void setRemoteUserControl(IRemoteUserControl remoteUserControl){
-        this.remoteUserControl = remoteUserControl;
-    }
 }
