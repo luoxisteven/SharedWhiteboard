@@ -1,6 +1,7 @@
 package Whiteboard;
 
 import RMI.IRemoteDrawBoard;
+import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.border.Border;
 import javax.swing.BorderFactory;
@@ -17,6 +19,7 @@ public class WhiteBoard extends JFrame implements Serializable {
     private String userName;
     private DrawBoard drawBoard;
     private JTextArea chatArea;
+    private ArrayList<JSONObject> msgObjs = new ArrayList<JSONObject>();
     private int mode; // 0 is Server, 1 is Client
 
     public WhiteBoard(String userName, int mode) {
@@ -156,20 +159,31 @@ public class WhiteBoard extends JFrame implements Serializable {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String msg = messageField.getText();
-                if (msg.contains("/") || msg.contains("\n")){
-                    JOptionPane.showMessageDialog(null,
-                            "You cannot send \"/\" or have a new line.",
-                            "Chat-box Error", JOptionPane.ERROR_MESSAGE);
-                } else if (!msg.isEmpty()) {
-                    Date dNow = new Date( );
-                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
-                    String chat = chatArea.getText()+userName+" ("+ft.format(dNow) +"): "+msg;
-                    chatArea.setText(chat + "\n\n");
-                    // replace this line with your actual server's broadcast method
-                    // server.broadcast("chat/0/"+chat);
-                    messageField.setText("");
-                }
+                Date now = new Date( );
+                SimpleDateFormat timeFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+                JSONObject chatObj = new JSONObject();
+                chatObj.put("UserName",userName);
+                chatObj.put("Time",timeFormat.format(now));
+                chatObj.put("Msg",messageField.getText());
+                msgObjs.add(chatObj);
+                String chat = chatArea.getText()+userName+" ("+timeFormat.format(now) +"): "+messageField.getText();
+                chatArea.setText(chat + "\n\n");
+                messageField.setText("");
+
+//                String msg = messageField.getText();
+//                if (msg.contains("/") || msg.contains("\n")){
+//                    JOptionPane.showMessageDialog(null,
+//                            "You cannot send \"/\" or have a new line.",
+//                            "Chat-box Error", JOptionPane.ERROR_MESSAGE);
+//                } else if (!msg.isEmpty()) {
+//                    Date dNow = new Date( );
+//                    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+//                    String chat = chatArea.getText()+userName+" ("+ft.format(dNow) +"): "+msg;
+//                    chatArea.setText(chat + "\n\n");
+//                    // replace this line with your actual server's broadcast method
+//                    // server.broadcast("chat/0/"+chat);
+//                    messageField.setText("");
+//                }
             }
         });
         sendMessagePanel.add(sendButton, BorderLayout.EAST);

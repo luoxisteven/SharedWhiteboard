@@ -2,6 +2,7 @@ package RMI;
 
 import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
+import netscape.javascript.JSObject;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -16,6 +17,7 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
+    private ArrayList<JSObject> msgObjs = new ArrayList<>();
 
     public RemoteUserControl(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
         this.whiteBoard = whiteBoard;
@@ -51,6 +53,14 @@ public class RemoteUserControl extends UnicastRemoteObject implements IRemoteUse
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
             client.initiateCanvas(drawBoard);
+        }
+    }
+
+    @Override
+    public void setUserList(String userName) throws RemoteException{
+        IRemoteClient client = clientMap.get(userName);
+        if (client != null) {
+            client.setUserList(userList);
         }
     }
 

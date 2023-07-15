@@ -47,6 +47,8 @@ public class Server{
             registry.bind("ServerBoard", remoteDrawBoard);
             remoteDrawBoard.setRemoteUserControl(remoteUserControl);
             whiteBoard.getDrawBoard().setRemoteUserControl(remoteUserControl);
+            remoteUserControl.getUserList().add(userName);
+            System.out.println("Manger Name: "+remoteUserControl.getUserList().get(0));
         } catch (RemoteException e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();

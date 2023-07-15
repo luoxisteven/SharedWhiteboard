@@ -6,6 +6,7 @@ import Whiteboard.WhiteBoard;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     private WhiteBoard whiteBoard;
@@ -24,6 +25,11 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     @Override
     public void initiateCanvas(DrawBoard drawBoard) throws RemoteException{
         this.drawBoard.copyDrawBoard(drawBoard);
+    }
+
+    @Override
+    public void setUserList(ArrayList<String> userList) throws RemoteException{
+
     }
     @Override
     public void addShape(Shape shape, Color color) throws RemoteException{
