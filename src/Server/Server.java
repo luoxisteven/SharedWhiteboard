@@ -14,7 +14,7 @@ public class Server{
     private String userName;
     private WhiteBoard whiteBoard;
     private Registry registry;
-    private IRemoteServer remoteServer;
+    private RemoteServer remoteServer;
 
     public Server(String serverAddress, int serverPort, String userName){
         this.serverAddress = serverAddress;
@@ -34,8 +34,9 @@ public class Server{
             registry = LocateRegistry.createRegistry(serverPort);
             remoteServer = new RemoteServer(userName,whiteBoard);
             remoteServer.getUserList().add(userName);
+            whiteBoard.setRemoteServer(remoteServer);
             whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
-            registry.bind("RemoteServer", remoteServer);
+            registry.bind("RemoteServer",(IRemoteServer) remoteServer);
         } catch (RemoteException e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();

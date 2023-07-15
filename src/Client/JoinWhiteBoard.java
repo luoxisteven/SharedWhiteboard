@@ -42,6 +42,7 @@ public class JoinWhiteBoard {
             IRemoteClient remoteClient = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
             IRemoteServer remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
             remoteServer.register(userName, remoteClient);
+            whiteBoard.setRemoteServer(remoteServer);
             whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
 
         } catch (RemoteException e) {

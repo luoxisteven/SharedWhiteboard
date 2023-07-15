@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,10 +16,9 @@ import javax.swing.border.Border;
 import javax.swing.BorderFactory;
 
 public class WhiteBoard extends JFrame implements Serializable {
-
     private DrawBoard drawBoard;
     private JTextArea chatArea;
-    private ArrayList<JSONObject> msgObjs = new ArrayList<JSONObject>();
+    private ArrayList<JSONObject> msgObjs = new ArrayList<>();
     private String userName;
     private int mode; // 0 is Server, 1 is Client
     private IRemoteServer remoteServer;
@@ -106,7 +106,8 @@ public class WhiteBoard extends JFrame implements Serializable {
                     }
                     drawBoard.setCurrentFontSize(fontSize);
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid font size.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid font size.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 dialog.dispose();
             });
@@ -128,7 +129,8 @@ public class WhiteBoard extends JFrame implements Serializable {
         colorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color newColor = JColorChooser.showDialog(null, "Choose a color", drawBoard.getCurrentColor());
+                Color newColor = JColorChooser.showDialog(null, "Choose a color",
+                        drawBoard.getCurrentColor());
                 if (newColor != null) {
                     drawBoard.setCurrentColor(newColor); // Use the new setter here
                 }
@@ -160,16 +162,23 @@ public class WhiteBoard extends JFrame implements Serializable {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Date now = new Date( );
-                SimpleDateFormat timeFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
-                JSONObject chatObj = new JSONObject();
-                chatObj.put("UserName",userName);
-                chatObj.put("Time",timeFormat.format(now));
-                chatObj.put("Msg",messageField.getText());
-                msgObjs.add(chatObj);
-                String chat = chatArea.getText()+userName+" ("+timeFormat.format(now) +"): "+messageField.getText();
-                chatArea.setText(chat + "\n\n");
-                messageField.setText("");
+                try {
+                    Date now = new Date( );
+                    SimpleDateFormat timeFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+                    JSONObject chatObj = new JSONObject();
+                    chatObj.put("UserName",userName);
+                    chatObj.put("Time",timeFormat.format(now));
+                    chatObj.put("Msg",messageField.getText());
+                    msgObjs.add(chatObj);
+                    if (remoteServer!=null){
+                        remoteServer.userAddChat(userName,chatObj);
+                    }
+                    String chat = chatArea.getText()+userName+" ("+timeFormat.format(now) +"): "+messageField.getText();
+                    chatArea.setText(chat + "\n\n");
+                    messageField.setText("");
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
 
 //                String msg = messageField.getText();
 //                if (msg.contains("/") || msg.contains("\n")){
@@ -252,12 +261,50 @@ public class WhiteBoard extends JFrame implements Serializable {
         chatArea.setText(chat);
     }
 
+    public void remoteAddChat(JSONObject msgObj){
+        msgObjs.add(msgObj);
+        String chat = chatArea.getText()+msgObj.get("UserName")+" ("+msgObj.get("Time")+"): "+msgObj.get("Msg");
+        chatArea.setText(chat + "\n\n");
+    }
+
+    public void createUserListPanel(){
+//        userList = new JList<>(userListModel); // Create the user list
+//        userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Allow only single selection
+//        userList.setVisibleRowCount(5); // Show 5 items at a time
+//        userList.setFixedCellWidth(100); // Set a fixed cell width
+//        JScrollPane userListScrollPane = new JScrollPane(userList); // Add scroll pane to the user list
+//        controlPanel.add(userListScrollPane); // Add the user list to the control panel
+//
+//        JButton kickOutButton = new JButton("Kick Out");
+//        kickOutButton.setMaximumSize(new Dimension(100,30)); // Make button fill horizontal space
+//        kickOutButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int selectedUserIndex = userList.getSelectedIndex();
+//                String selectedUser = userList.getSelectedValue();
+//                if(selectedUserIndex == 0) {
+//                    JOptionPane.showMessageDialog(null,
+//                            "Sorry, you are not allow to remove yourself.",
+//                            "Error", JOptionPane.ERROR_MESSAGE);
+//                } else if (selectedUser != null) {
+//                    userListModel.remove(selectedUserIndex);
+//                    userDeleteCast(-1,selectedUserIndex);
+//                }
+//            }
+//        });
+//        controlPanel.add(kickOutButton); // Add the kick-out button to the control panel
+    }
+
     public ArrayList<JSONObject> getMsgObjs() {
         return msgObjs;
     }
 
     public void setMsgObjs(ArrayList<JSONObject> msgObjs) {
         this.msgObjs = msgObjs;
+    }
+
+    public void setRemoteServer(IRemoteServer remoteServer) {
+        this.remoteServer = remoteServer;
     }
 
     public DrawBoard getDrawBoard() {

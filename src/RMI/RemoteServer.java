@@ -2,6 +2,7 @@ package RMI;
 
 import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
+import org.json.simple.JSONObject;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -64,8 +65,22 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         }
     }
 
-    public void addChat() throws RemoteException{
+    public void addChat(ArrayList<String> userList, JSONObject chatObj) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.addChat(chatObj);
+            }
+        }
+    }
 
+    public void userAddChat(String userName, JSONObject chatObj) throws RemoteException{
+        if (!userName.equals(this.userName)){
+            whiteBoard.remoteAddChat(chatObj);
+        }
+        ArrayList<String> userList = new ArrayList<>(this.userList);
+        userList.remove(userName);
+        this.addChat(userList,chatObj);
     }
 
     @Override
@@ -74,6 +89,14 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         if (client != null) {
             client.setUserList(userList);
         }
+    }
+
+    public void addUserToList(String userName) throws RemoteException{
+
+    }
+
+    public void deleteUserFromList(String userName) throws RemoteException{
+
     }
 
     @Override

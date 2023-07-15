@@ -26,8 +26,8 @@ public class DrawBoard extends JPanel implements Serializable {
     private java.util.List<Color> textColors = new ArrayList<>();
     private java.util.List<Shape> shapes = new ArrayList<>();
     private java.util.List<String> texts = new ArrayList<>();
-    private java.util.List<Integer> textFontSizes = new ArrayList<>();
     private List<Point> textPoints = new ArrayList<>();
+    private java.util.List<Integer> textFontSizes = new ArrayList<>();
     private transient Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private String userName;
@@ -44,7 +44,6 @@ public class DrawBoard extends JPanel implements Serializable {
                 x1 = e.getX();
                 y1 = e.getY();
             }
-
             public void mouseReleased(MouseEvent e) {
                 if (!shape.equals("Pencil") || !shape.equals("Eraser")) {
                     addShape();
@@ -65,7 +64,6 @@ public class DrawBoard extends JPanel implements Serializable {
                 }
             }
         });
-
         setBackground(Color.WHITE);
     }
 
@@ -73,18 +71,15 @@ public class DrawBoard extends JPanel implements Serializable {
         super.paintComponent(g);
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
         for (int i = 0; i < shapes.size(); i++) {
             g2.setColor(shapeColors.get(i));
             g2.draw(shapes.get(i));
         }
-
         for (int i = 0; i < texts.size(); i++) {
             g2.setColor(textColors.get(i));
             g2.setFont(new Font("default", Font.PLAIN, textFontSizes.get(i)));
             g2.drawString(texts.get(i), textPoints.get(i).x, textPoints.get(i).y);
         }
-
         if (tempShape != null) {
             g2.setColor(currentColor);
             g2.draw(tempShape);
@@ -150,8 +145,8 @@ public class DrawBoard extends JPanel implements Serializable {
                 remoteServer.userAddText(userName, textField.getText(),
                         new Point(x1, y1), currentColor, currentFontSize);
             }
-            textColors.add(currentColor);
             texts.add(textField.getText());
+            textColors.add(currentColor);
             textPoints.add(new Point(x1, y1));
             textFontSizes.add(currentFontSize);
         } catch (RemoteException e) {
@@ -202,7 +197,6 @@ public class DrawBoard extends JPanel implements Serializable {
 
     public void setShape(String shape) {
         this.shape = shape;
-        // Add these lines to change the cursor based on the shape
         switch (shape) {
             case "Pencil":
             case "Line":
@@ -334,5 +328,4 @@ public class DrawBoard extends JPanel implements Serializable {
     public void setRemoteServer(IRemoteServer remoteServer) {
         this.remoteServer = remoteServer;
     }
-
 }

@@ -1,5 +1,7 @@
 package RMI;
 
+import org.json.simple.JSONObject;
+
 import java.awt.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,6 +14,8 @@ public interface IRemoteServer extends Remote {
     void broadcastMessage(String message) throws RemoteException;
     void initiateDrawBoard(String userName) throws RemoteException;
     void initiateChatBox(String userName) throws RemoteException;
+    public void addChat(ArrayList<String> userList, JSONObject chatObj) throws RemoteException;
+    void userAddChat(String userName, JSONObject chatObj) throws RemoteException;
     void setUserList(String userName) throws RemoteException;
     void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException;
     void userAddShape(String userName, Shape shape, Color color) throws RemoteException;

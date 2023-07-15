@@ -34,6 +34,11 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
+    public void addChat(JSONObject msgObj) throws RemoteException{
+        this.whiteBoard.remoteAddChat(msgObj);
+    }
+
+    @Override
     public void setUserList(ArrayList<String> userList) throws RemoteException{
 
     }
