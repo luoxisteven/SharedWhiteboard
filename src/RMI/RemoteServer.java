@@ -100,6 +100,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
 
     }
 
+    //TODO: Synchronized
     @Override
     public void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){

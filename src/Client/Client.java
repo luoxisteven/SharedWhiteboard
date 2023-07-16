@@ -1,13 +1,9 @@
 package Client;
 
-import RMI.IRemoteClient;
-import RMI.IRemoteServer;
-import RMI.RemoteClient;
-import RMI.RemoteServer;
+import RMI.*;
 import Whiteboard.WhiteBoard;
 
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
