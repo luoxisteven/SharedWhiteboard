@@ -13,10 +13,10 @@ public interface IRemoteClient extends Remote {
     void initiateCanvas(DrawBoard drawBoard) throws RemoteException;
     void initiateChatBox(ArrayList<JSONObject> msgObjs) throws RemoteException;
     void addChat(JSONObject msgObj) throws RemoteException;
-    void setUserList(ArrayList<String> userList) throws RemoteException;
     void addShape(Shape shape, Color color) throws RemoteException;
     void addText(String text, Point point, Color color, int fontsize) throws RemoteException;
     void deleteShape(int index) throws RemoteException;
     void deleteText(int index) throws RemoteException;
     void clearDrawBoard() throws RemoteException;
+    void setUserList(String user, int action) throws RemoteException;
 }

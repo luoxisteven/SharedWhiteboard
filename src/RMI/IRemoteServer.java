@@ -16,7 +16,6 @@ public interface IRemoteServer extends Remote {
     void initiateChatBox(String userName) throws RemoteException;
     public void addChat(ArrayList<String> userList, JSONObject chatObj) throws RemoteException;
     void userAddChat(String userName, JSONObject chatObj) throws RemoteException;
-    void setUserList(String userName) throws RemoteException;
     void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException;
     void userAddShape(String userName, Shape shape, Color color) throws RemoteException;
     void addText(String text, Point point, Color color, int fontsize4,
@@ -25,7 +24,9 @@ public interface IRemoteServer extends Remote {
     void deleteShape(int index, ArrayList<String> userList) throws RemoteException;
     void userDeleteShape(String userName, int index) throws RemoteException;
     void deleteText(int index, ArrayList<String> userList) throws RemoteException;
-    public void userDeleteText(String userName, int index) throws RemoteException;
+    void userDeleteText(String userName, int index) throws RemoteException;
     void clearDrawBoard(ArrayList<String> userList) throws RemoteException;
     void userClearDrawBoard(String userName) throws RemoteException;
+    void kickOutUser(String user) throws RemoteException;
+
 }

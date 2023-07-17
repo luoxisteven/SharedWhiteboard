@@ -4,18 +4,21 @@ import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
+    private String userName;
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
 
-    public RemoteClient(WhiteBoard whiteBoard, DrawBoard drawBoard) throws RemoteException {
+    public RemoteClient(String userName, WhiteBoard whiteBoard) throws RemoteException {
+        this.userName = userName;
         this.whiteBoard = whiteBoard;
-        this.drawBoard = drawBoard;
+        this.drawBoard = whiteBoard.getDrawBoard();
     }
 
     @Override
@@ -39,10 +42,6 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void setUserList(ArrayList<String> userList) throws RemoteException{
-
-    }
-    @Override
     public void addShape(Shape shape, Color color) throws RemoteException{
         drawBoard.remoteAddShape(shape, color);
     }
@@ -63,5 +62,20 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     @Override
     public void clearDrawBoard() throws RemoteException{
         drawBoard.remoteClearDrawBoard();
+    }
+
+    @Override
+    public void setUserList(String user, int action) throws RemoteException{
+        System.out.println(0);
+        if (user == userName && action == 0){
+            System.out.println(1);
+            JOptionPane.showMessageDialog(null,
+                    "Sorry, you have been removed by the Organizer",
+                    "Denial", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        } else{
+            System.out.println(2);
+            whiteBoard.setUserJList();
+        }
     }
 }

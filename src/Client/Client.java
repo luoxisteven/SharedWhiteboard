@@ -36,12 +36,11 @@ public class Client {
 
             registry = LocateRegistry.getRegistry(serverAddress,serverPort);
 
-            remoteClient = new RemoteClient(whiteBoard, whiteBoard.getDrawBoard());
+            remoteClient = new RemoteClient(userName, whiteBoard);
             remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
-            remoteServer.register(userName, remoteClient);
-
             whiteBoard.setRemoteServer(remoteServer);
             whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
+            remoteServer.register(userName, remoteClient);
 
         } catch (RemoteException e) {
             throw new RuntimeException(e);

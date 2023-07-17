@@ -4,6 +4,7 @@ import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,6 +17,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
+//    DefaultListModel<String> userList = new DefaultListModel<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
 
     public RemoteServer(String userName, WhiteBoard whiteBoard) throws RemoteException {
@@ -30,8 +32,12 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         if (!userList.contains(userName)){
             userList.add(userName);
             clientMap.put(userName, client);
+            addUser(userName);
+            whiteBoard.setUserJList();
             initiateDrawBoard(userName);
             initiateChatBox(userName);
+        } else{
+            // TODO: 用户名重复
         }
     }
 
@@ -82,14 +88,6 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         ArrayList<String> userList = new ArrayList<>(this.userList);
         userList.remove(userName);
         this.addChat(userList,chatObj);
-    }
-
-    @Override
-    public void setUserList(String userName) throws RemoteException{
-        IRemoteClient client = clientMap.get(userName);
-        if (client != null) {
-            client.setUserList(userList);
-        }
     }
 
     public void addUserToList(String userName) throws RemoteException{
@@ -205,6 +203,30 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     @Override
     public ArrayList<String> getUserList() throws RemoteException {
         return userList;
+    }
+
+    public void addUser(String user) throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.setUserList(user, 1);
+            }
+        }
+    }
+
+    public void kickOutUser(String user) throws RemoteException{
+
+        IRemoteClient kickOutClient = clientMap.get(user);
+        kickOutClient.setUserList(user, 0);
+        userList.remove(user);
+        clientMap.remove(user);
+
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.setUserList(user, 0);
+            }
+        }
     }
 
 }

@@ -89,21 +89,11 @@ public class DrawBoard extends JPanel implements Serializable {
     public void draw() {
         int diameter = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
         switch (shape) {
-            case "Line":
-                tempShape = new Line2D.Double(x1, y1, x2, y2);
-                break;
-            case "Circle":
-                tempShape = new Ellipse2D.Double(x1, y1, diameter, diameter);
-                break;
-            case "Oval":
-                tempShape = new Ellipse2D.Float(x1, y1, x2 - x1, y2 - y1);
-                break;
-            case "Rectangle":
-                tempShape = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
-                break;
-            case "Text":
-                addText();
-                break;
+            case "Line" -> tempShape = new Line2D.Double(x1, y1, x2, y2);
+            case "Circle" -> tempShape = new Ellipse2D.Double(x1, y1, diameter, diameter);
+            case "Oval" -> tempShape = new Ellipse2D.Float(x1, y1, x2 - x1, y2 - y1);
+            case "Rectangle" -> tempShape = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
+            case "Text" -> addText();
         }
         repaint();
     }
@@ -158,7 +148,7 @@ public class DrawBoard extends JPanel implements Serializable {
         try {
             for (int i = shapes.size() - 1; i >= 0; i--) {
                 if (shapes.get(i).contains(point) || isNearLine(shapes.get(i), point)) {
-                    shapes.remove(i);
+                       shapes.remove(i);
                     shapeColors.remove(i);
                     if (remoteServer != null) {
                         remoteServer.userDeleteShape(userName, i);
@@ -198,19 +188,10 @@ public class DrawBoard extends JPanel implements Serializable {
     public void setShape(String shape) {
         this.shape = shape;
         switch (shape) {
-            case "Pencil":
-            case "Line":
-            case "Circle":
-            case "Oval":
-            case "Rectangle":
-                this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-                break;
-            case "Text":
-                this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                break;
-            case "Eraser":
-                this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                break;
+            case "Pencil", "Line", "Circle", "Oval", "Rectangle" ->
+                    this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            case "Text" -> this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+            case "Eraser" -> this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
     }
 
