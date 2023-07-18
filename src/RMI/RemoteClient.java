@@ -9,6 +9,7 @@ import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     private String userName;
@@ -66,15 +67,12 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
 
     @Override
     public void setUserList(String user, int action) throws RemoteException{
-        System.out.println(0);
-        if (user == userName && action == 0){
-            System.out.println(1);
+        if (userName.equals(user)&& action == 0){
             JOptionPane.showMessageDialog(null,
                     "Sorry, you have been removed by the Organizer",
                     "Denial", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } else{
-            System.out.println(2);
             whiteBoard.setUserJList();
         }
     }
