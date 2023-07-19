@@ -26,8 +26,8 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void initiateCanvas(DrawBoard drawBoard) throws RemoteException{
-        this.drawBoard.copyDrawBoard(drawBoard);
+    public void initiateCanvas(String operator, DrawBoard drawBoard) throws RemoteException{
+        this.drawBoard.copyDrawBoard(operator, drawBoard);
     }
 
     @Override
@@ -41,26 +41,28 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void addShape(Shape shape, Color color) throws RemoteException{
-        drawBoard.remoteAddShape(shape, color);
-    }
-    @Override
-    public void addText(String text, Point point, Color color, int fontsize) throws RemoteException{
-        drawBoard.remoteAddText(text, point, color, fontsize);
-    }
-    @Override
-    public void deleteShape(int index) throws RemoteException{
-        drawBoard.remoteDeleteShape(index);
+    public void addShape(String operator, Shape shape, Color color) throws RemoteException{
+        drawBoard.remoteAddShape(operator, shape, color);
     }
 
     @Override
-    public void deleteText(int index) throws RemoteException{
-        drawBoard.remoteDeleteText(index);
+    public void addText(String operator, String text, Point point, Color color, int fontsize) throws RemoteException{
+        drawBoard.remoteAddText(operator, text, point, color, fontsize);
     }
 
     @Override
-    public void clearDrawBoard() throws RemoteException{
-        drawBoard.remoteClearDrawBoard();
+    public void deleteShape(String operator, int index) throws RemoteException{
+        drawBoard.remoteDeleteShape(operator, index);
+    }
+
+    @Override
+    public void deleteText(String operator, int index) throws RemoteException{
+        drawBoard.remoteDeleteText(operator, index);
+    }
+
+    @Override
+    public void clearDrawBoard(String operator) throws RemoteException{
+        drawBoard.remoteClearDrawBoard(operator);
     }
 
     @Override

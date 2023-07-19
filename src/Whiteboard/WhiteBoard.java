@@ -312,20 +312,12 @@ public class WhiteBoard extends JFrame implements Serializable {
         return msgObjs;
     }
 
-    public void setMsgObjs(ArrayList<JSONObject> msgObjs) {
-        this.msgObjs = msgObjs;
-    }
-
     public void setRemoteServer(IRemoteServer remoteServer) {
         this.remoteServer = remoteServer;
     }
 
     public DrawBoard getDrawBoard() {
         return drawBoard;
-    }
-
-    public JList<String> getUserJList() {
-        return userJList;
     }
 
     public void setUserJList() {
@@ -336,10 +328,6 @@ public class WhiteBoard extends JFrame implements Serializable {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setSelectedUser(String userName){
-        userJList.setSelectedValue(userName,true);
     }
 
     public static void main(String[] args){

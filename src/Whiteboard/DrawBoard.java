@@ -39,7 +39,6 @@ public class DrawBoard extends JPanel implements Serializable {
         this.userName = userName;
         this.mode = mode;
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 x1 = e.getX();
@@ -106,6 +105,7 @@ public class DrawBoard extends JPanel implements Serializable {
             }
             shapes.add(new Line2D.Float(x1, y1, x2, y2));
             shapeColors.add(currentColor);
+            setSelectedUser(userName);
             repaint();
             x1 = x2;
             y1 = y2;
@@ -123,6 +123,7 @@ public class DrawBoard extends JPanel implements Serializable {
                 shapeColors.add(currentColor);
                 shapes.add(tempShape);
                 tempShape = null;
+                setSelectedUser(userName);
                 repaint();
             }
         } catch (RemoteException e) {
@@ -140,6 +141,7 @@ public class DrawBoard extends JPanel implements Serializable {
             textColors.add(currentColor);
             textPoints.add(new Point(x1, y1));
             textFontSizes.add(currentFontSize);
+            setSelectedUser(userName);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -171,6 +173,7 @@ public class DrawBoard extends JPanel implements Serializable {
                     break;
                 }
             }
+            setSelectedUser(userName);
             repaint ();
         } catch (RemoteException e) {
                 throw new RuntimeException(e);
@@ -196,13 +199,14 @@ public class DrawBoard extends JPanel implements Serializable {
         }
     }
 
-    public void copyDrawBoard(DrawBoard drawBoard){
+    public void copyDrawBoard(String operator, DrawBoard drawBoard){
         this.shapes = drawBoard.getShapes();
         this.shapeColors = drawBoard.getShapeColors();
         this.texts = drawBoard.getTexts();
         this.textColors = drawBoard.getTextColors();
         this.textPoints = drawBoard.getTextPoints();
         this.textFontSizes = drawBoard.getTextFontSizes();
+        this.setSelectedUser(operator);
         repaint();
     }
 
@@ -217,37 +221,41 @@ public class DrawBoard extends JPanel implements Serializable {
             textPoints.clear();
             textColors.clear();
             textFontSizes.clear();
+            setSelectedUser(userName);
             repaint();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void remoteAddShape(Shape shape, Color color){
+    public void remoteAddShape(String operator, Shape shape, Color color){
         if(shape!=null) {
             shapes.add(shape);
             shapeColors.add(color);
+            setSelectedUser(operator);
             repaint();
         }
     }
 
-    public void remoteAddText(String text, Point point, Color color, int fontsize){
+    public void remoteAddText(String operator, String text, Point point, Color color, int fontsize){
         texts.add(text);
         textPoints.add(point);
         textColors.add(color);
         textFontSizes.add(fontsize);
+        setSelectedUser(operator);
         repaint();
     }
 
-    public void remoteDeleteShape(int index){
+    public void remoteDeleteShape(String operator, int index){
         if (shapes.size()>index && shapeColors.size()>index){
             shapes.remove(index);
             shapeColors.remove(index);
         }
+        setSelectedUser(operator);
         repaint();
     }
 
-    public void remoteDeleteText(int index){
+    public void remoteDeleteText(String operator, int index){
         if (texts.size()>index && textPoints.size()>index &&
                 textColors.size()>index && textFontSizes.size()>index){
             texts.remove(index);
@@ -255,16 +263,18 @@ public class DrawBoard extends JPanel implements Serializable {
             textColors.remove(index);
             textFontSizes.remove(index);
         }
+        setSelectedUser(operator);
         repaint();
     }
 
-    public void remoteClearDrawBoard(){
+    public void remoteClearDrawBoard(String operator){
         shapes.clear();
         shapeColors.clear(); 
         texts.clear();
         textPoints.clear();
         textColors.clear();
         textFontSizes.clear();
+        setSelectedUser(operator);
         repaint();
     }
 
