@@ -29,7 +29,7 @@ public class WhiteBoard extends JFrame implements Serializable {
         this.mode = mode;
         setTitle("Shared Whiteboard Server: " + userName);
 
-        drawBoard = new DrawBoard(userName, mode);
+        this.drawBoard = new DrawBoard(userName, mode);
         JPanel controlPanel = createControlPanel();
         JPanel chatPanel = createChatPanel();
         JScrollPane userPane = createUsersPane();
@@ -48,11 +48,13 @@ public class WhiteBoard extends JFrame implements Serializable {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        drawBoard.setUserJList(userJList);
     }
 
     private JPanel createControlPanel() {
         JPanel controlPanel = new JPanel();
-        controlPanel.setPreferredSize(new Dimension(100, getHeight()));
+        controlPanel.setPreferredSize(new Dimension(110, getHeight()));
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 
         // create a titled border with the title "Tools"
@@ -298,7 +300,7 @@ public class WhiteBoard extends JFrame implements Serializable {
             return kickOutButton;
     }
 
-    public void close(){
+    public void beingKickedOff(){
         JOptionPane.showMessageDialog(null,
                 "Sorry, you have been removed by the Organizer",
                 "Denial", JOptionPane.ERROR_MESSAGE);
@@ -334,6 +336,10 @@ public class WhiteBoard extends JFrame implements Serializable {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setSelectedUser(String userName){
+        userJList.setSelectedValue(userName,true);
     }
 
     public static void main(String[] args){

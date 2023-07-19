@@ -4,7 +4,6 @@ import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
 import org.json.simple.JSONObject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -70,7 +69,7 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    whiteBoard.close();
+                    whiteBoard.beingKickedOff();
                 }
             }).start();
         } else{

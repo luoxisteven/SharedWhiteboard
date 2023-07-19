@@ -31,6 +31,7 @@ public class DrawBoard extends JPanel implements Serializable {
     private transient Graphics2D g2;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private String userName;
+    JList<String> userJList;
     private int mode;
     private IRemoteServer remoteServer;
 
@@ -309,5 +310,13 @@ public class DrawBoard extends JPanel implements Serializable {
 
     public void setRemoteServer(IRemoteServer remoteServer) {
         this.remoteServer = remoteServer;
+    }
+
+    public void setUserJList(JList<String> userJList) {
+        this.userJList = userJList;
+    }
+
+    public void setSelectedUser(String userName){
+        userJList.setSelectedValue(userName,true);
     }
 }
