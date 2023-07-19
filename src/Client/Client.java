@@ -3,6 +3,7 @@ package Client;
 import RMI.*;
 import Whiteboard.WhiteBoard;
 
+import javax.swing.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

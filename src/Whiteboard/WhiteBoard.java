@@ -288,9 +288,6 @@ public class WhiteBoard extends JFrame implements Serializable {
                         } else if (selectedUser != null && remoteServer != null) {
                             remoteServer.kickOutUser(selectedUser);
                             userJList.setListData(remoteServer.getUserList().toArray(new String[0]));
-//                        userList.remove(selectedUserIndex);
-//                        userDeleteCast(-1,selectedUserIndex);
-//                        userJList.setListData(userList.toArray(new String[0])); // Refresh the JList after removing a user
                         }
                     } catch (RemoteException ex){
                         throw new RuntimeException(ex);

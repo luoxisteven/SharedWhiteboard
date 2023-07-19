@@ -207,12 +207,10 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
     @Override
     public void kickOutUser(String user) throws RemoteException {
-        System.out.println(clientMap);
         IRemoteClient kickOutClient = clientMap.get(user);
         kickOutClient.setUserList(user, 0);
         userList.remove(user);
         clientMap.remove(user);
-        System.out.println(clientMap);
 
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
