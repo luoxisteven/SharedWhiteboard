@@ -4,7 +4,6 @@ import Whiteboard.DrawBoard;
 import Whiteboard.WhiteBoard;
 import org.json.simple.JSONObject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -17,7 +16,6 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     private WhiteBoard whiteBoard;
     private DrawBoard drawBoard;
     private ArrayList<String> userList = new ArrayList<>();
-//    DefaultListModel<String> userList = new DefaultListModel<>();
     private Map<String, IRemoteClient> clientMap = new HashMap<>();
 
     public RemoteServer(String userName, WhiteBoard whiteBoard) throws RemoteException {
@@ -195,11 +193,6 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         this.clearDrawBoard(operator, userList);
     }
 
-    @Override
-    public ArrayList<String> getUserList() throws RemoteException {
-        return userList;
-    }
-
     public void addUser(String user) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -208,6 +201,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
             }
         }
     }
+
     @Override
     public void kickOutUser(String user) throws RemoteException {
         IRemoteClient kickOutClient = clientMap.get(user);
@@ -221,22 +215,11 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
                 client.setUserList(user, 0);
             }
         }
-
     }
 
+    @Override
+    public ArrayList<String> getUserList() throws RemoteException {
+        return userList;
+    }
 
-//    public void kickOutUser(String user) throws RemoteException{
-//
-//        IRemoteClient kickOutClient = clientMap.get(user);
-//        kickOutClient.setUserList(user, 0);
-//        userList.remove(user);
-//        clientMap.remove(user);
-//
-//        for (String userName: userList){
-//            IRemoteClient client = clientMap.get(userName);
-//            if (client != null) {
-//                client.setUserList(user, 0);
-//            }
-//        }
-//    }
 }

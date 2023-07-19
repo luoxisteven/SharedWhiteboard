@@ -18,10 +18,10 @@ import javax.swing.BorderFactory;
 public class WhiteBoard extends JFrame implements Serializable {
     private DrawBoard drawBoard;
     private JTextArea chatArea;
+    private JList<String> userJList;
     private ArrayList<JSONObject> msgObjs = new ArrayList<>();
     private String userName;
     private int mode; // 0 is Server, 1 is Client
-    JList<String> userJList;
     private IRemoteServer remoteServer;
 
     public WhiteBoard(String userName, int mode) {
@@ -62,7 +62,6 @@ public class WhiteBoard extends JFrame implements Serializable {
         controlPanel.setBorder(titledBorder);  // add the border to the panel
 
         String[] buttonLabels = {"Pencil", "Line", "Circle", "Oval", "Rectangle"};
-
         for (String label : buttonLabels) {
             controlPanel.add(createButton(label));
         }
@@ -323,7 +322,11 @@ public class WhiteBoard extends JFrame implements Serializable {
     public void setUserJList() {
         try {
             if(remoteServer!=null){
+                String selectedUser = userJList.getSelectedValue();
                 userJList.setListData(remoteServer.getUserList().toArray(new String[0]));
+                if (remoteServer.getUserList().contains(selectedUser)){
+                    userJList.setSelectedValue(selectedUser, true);
+                }
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);

@@ -22,16 +22,16 @@ public class DrawBoard extends JPanel implements Serializable {
     private Shape tempShape = null;
     private Color currentColor = Color.BLACK;
     private int currentFontSize = 12;
+    private transient Graphics2D g2;
     private java.util.List<Color> shapeColors = new ArrayList<>();
     private java.util.List<Color> textColors = new ArrayList<>();
     private java.util.List<Shape> shapes = new ArrayList<>();
     private java.util.List<String> texts = new ArrayList<>();
     private List<Point> textPoints = new ArrayList<>();
     private java.util.List<Integer> textFontSizes = new ArrayList<>();
-    private transient Graphics2D g2;
+    private JList<String> userJList;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private String userName;
-    JList<String> userJList;
     private int mode;
     private IRemoteServer remoteServer;
 

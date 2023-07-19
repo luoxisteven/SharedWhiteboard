@@ -31,7 +31,7 @@ public class Server{
 
     public void createInternet(){
         try {
-            System.setProperty("java.rmi.server.hostname",serverAddress);
+            System.setProperty("java.rmi.server.hostname", serverAddress);
             registry = LocateRegistry.createRegistry(serverPort);
             remoteServer = new RemoteServer(userName,whiteBoard);
             whiteBoard.setRemoteServer(remoteServer);

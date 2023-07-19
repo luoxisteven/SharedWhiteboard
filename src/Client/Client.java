@@ -36,7 +36,6 @@ public class Client {
         try {
 
             registry = LocateRegistry.getRegistry(serverAddress,serverPort);
-
             remoteClient = new RemoteClient(userName, whiteBoard);
             remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
             whiteBoard.setRemoteServer(remoteServer);
