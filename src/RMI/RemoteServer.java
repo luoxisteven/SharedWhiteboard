@@ -90,14 +90,6 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         this.addChat(userList,chatObj);
     }
 
-    public void addUserToList(String userName) throws RemoteException{
-
-    }
-
-    public void deleteUserFromList(String userName) throws RemoteException{
-
-    }
-
     //TODO: Synchronized
     @Override
     public void addShape(Shape shape, Color color, ArrayList<String> userList) throws RemoteException{
@@ -213,13 +205,14 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
             }
         }
     }
-
-    public void kickOutUser(String user) throws RemoteException{
-
+    @Override
+    public void kickOutUser(String user) throws RemoteException {
+        System.out.println(clientMap);
         IRemoteClient kickOutClient = clientMap.get(user);
         kickOutClient.setUserList(user, 0);
         userList.remove(user);
         clientMap.remove(user);
+        System.out.println(clientMap);
 
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -227,6 +220,22 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
                 client.setUserList(user, 0);
             }
         }
+
     }
 
+
+//    public void kickOutUser(String user) throws RemoteException{
+//
+//        IRemoteClient kickOutClient = clientMap.get(user);
+//        kickOutClient.setUserList(user, 0);
+//        userList.remove(user);
+//        clientMap.remove(user);
+//
+//        for (String userName: userList){
+//            IRemoteClient client = clientMap.get(userName);
+//            if (client != null) {
+//                client.setUserList(user, 0);
+//            }
+//        }
+//    }
 }
