@@ -10,7 +10,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +196,7 @@ public class DrawBoard extends JPanel{
         }
     }
 
-    public void copyDrawBoard(String operator, DrawBoard drawBoard){
+    public synchronized void copyDrawBoard(String operator, DrawBoard drawBoard){
         this.shapes = drawBoard.getShapes();
         this.shapeColors = drawBoard.getShapeColors();
         this.texts = drawBoard.getTexts();
@@ -208,7 +207,7 @@ public class DrawBoard extends JPanel{
         repaint();
     }
 
-    public void clearDrawBoard() {
+    public synchronized void clearDrawBoard() {
         try {
             if (remoteServer!=null){
                 remoteServer.userClearDrawBoard(userName);
@@ -226,7 +225,7 @@ public class DrawBoard extends JPanel{
         }
     }
 
-    public void remoteAddShape(String operator, Shape shape, Color color){
+    public synchronized void remoteAddShape(String operator, Shape shape, Color color){
         if(shape!=null) {
             shapes.add(shape);
             shapeColors.add(color);
@@ -235,7 +234,7 @@ public class DrawBoard extends JPanel{
         }
     }
 
-    public void remoteAddText(String operator, String text, Point point, Color color, int fontsize){
+    public synchronized void remoteAddText(String operator, String text, Point point, Color color, int fontsize){
         texts.add(text);
         textPoints.add(point);
         textColors.add(color);
@@ -244,7 +243,7 @@ public class DrawBoard extends JPanel{
         repaint();
     }
 
-    public void remoteDeleteShape(String operator, int index){
+    public synchronized void remoteDeleteShape(String operator, int index){
         if (shapes.size()>index && shapeColors.size()>index){
             shapes.remove(index);
             shapeColors.remove(index);
@@ -253,7 +252,7 @@ public class DrawBoard extends JPanel{
         repaint();
     }
 
-    public void remoteDeleteText(String operator, int index){
+    public synchronized void remoteDeleteText(String operator, int index){
         if (texts.size()>index && textPoints.size()>index &&
                 textColors.size()>index && textFontSizes.size()>index){
             texts.remove(index);
@@ -265,7 +264,7 @@ public class DrawBoard extends JPanel{
         repaint();
     }
 
-    public void remoteClearDrawBoard(String operator){
+    public synchronized void remoteClearDrawBoard(String operator){
         shapes.clear();
         shapeColors.clear(); 
         texts.clear();
@@ -296,47 +295,47 @@ public class DrawBoard extends JPanel{
         return textFontSizes;
     }
 
-    public void setShapeColors(List<Color> shapeColors) {
+    public synchronized void setShapeColors(List<Color> shapeColors) {
         this.shapeColors = shapeColors;
     }
 
-    public void setTextColors(List<Color> textColors) {
+    public synchronized void setTextColors(List<Color> textColors) {
         this.textColors = textColors;
     }
 
-    public void setShapes(List<Shape> shapes) {
+    public synchronized void setShapes(List<Shape> shapes) {
         this.shapes = shapes;
     }
 
-    public void setTexts(List<String> texts) {
+    public synchronized void setTexts(List<String> texts) {
         this.texts = texts;
     }
 
-    public void setTextPoints(List<Point> textPoints) {
+    public synchronized void setTextPoints(List<Point> textPoints) {
         this.textPoints = textPoints;
     }
 
-    public void setTextFontSizes(List<Integer> textFontSizes) {
+    public synchronized void setTextFontSizes(List<Integer> textFontSizes) {
         this.textFontSizes = textFontSizes;
     }
 
-    public List<Point> getTextPoints() {
+    public synchronized List<Point> getTextPoints() {
         return textPoints;
     }
 
-    public void setTextField(String text){
+    public synchronized void setTextField(String text){
         textField.setText(text);
     }
 
-    public void setCurrentColor(Color color) {
+    public synchronized void setCurrentColor(Color color) {
         this.currentColor = color;
     }
 
-    public Color getCurrentColor(){
+    public synchronized Color getCurrentColor(){
         return this.currentColor;
     }
 
-    public void setCurrentFontSize(int size) {
+    public synchronized void setCurrentFontSize(int size) {
         this.currentFontSize = size;
     }
 
@@ -344,11 +343,11 @@ public class DrawBoard extends JPanel{
         this.remoteServer = remoteServer;
     }
 
-    public void setUserJList(JList<String> userJList) {
+    public synchronized void setUserJList(JList<String> userJList) {
         this.userJList = userJList;
     }
 
-    public void setSelectedUser(String userName){
+    public synchronized void setSelectedUser(String userName){
         userJList.setSelectedValue(userName,true);
     }
 }

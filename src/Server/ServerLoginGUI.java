@@ -5,6 +5,7 @@ package Server;
         import java.awt.event.ActionListener;
         import java.rmi.AlreadyBoundException;
         import java.rmi.RemoteException;
+        import java.sql.Time;
 
 /**
  * Server Login GUI
@@ -20,15 +21,15 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
     private JTextField portField;
     private JTextField nameField;
     private JButton loginButton;
-    private static final String GUITitle = "Shared Whiteboard Server @Xi Luo, 1302954";
-    private static final String developerInfo = "Developed by Xi Luo, 1302954";
-    private static final String taskInfo = "COMP90015 Distributed Systems";
-    private static final String copyrightInfo = "@Copyright: The University of Melbourne";
-    private static final String timeInfo = "2023.5";
+    private static final String GUI_TITLE = "Shared Whiteboard Server @Xi Luo, 1302954";
+    private static final String DEVELOPER_INFO = "Developed by Xi Luo, 1302954";
+    private static final String TASK_INFO = "COMP90015 Distributed Systems";
+    private static final String COPYRIGHT = "@Copyright: The University of Melbourne";
+    private static final String TIME_INFO = "2023.5";
 
     public ServerLoginGUI(String address, int port, String userName) {
 
-        super(GUITitle);
+        super(GUI_TITLE);
 
         // Create IP address label
         JLabel ipLabel = new JLabel("Server IP :");
@@ -67,22 +68,22 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
         add(loginButton);
 
         // Create label for developer info
-        JLabel developerInfoLabel = new JLabel(developerInfo);
+        JLabel developerInfoLabel = new JLabel(DEVELOPER_INFO);
         developerInfoLabel.setBounds(200, 300, 200, 20);
         add(developerInfoLabel);
 
         // Create label for task description
-        JLabel taskInfoLabel = new JLabel(taskInfo);
+        JLabel taskInfoLabel = new JLabel(TASK_INFO);
         taskInfoLabel.setBounds(200, 320, 300, 20);
         add(taskInfoLabel);
 
         // Create label for copy right info
-        JLabel copyrightLabel = new JLabel(copyrightInfo);
+        JLabel copyrightLabel = new JLabel(COPYRIGHT);
         copyrightLabel.setBounds(200, 340, 300, 20);
         add(copyrightLabel);
 
         // Create label of time info
-        JLabel timeLabel = new JLabel(timeInfo);
+        JLabel timeLabel = new JLabel(TIME_INFO);
         timeLabel.setBounds(400, 360, 300, 20);
         add(timeLabel);
 

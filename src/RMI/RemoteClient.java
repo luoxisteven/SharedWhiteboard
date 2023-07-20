@@ -21,52 +21,52 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void retrieveMessage(String message) throws RemoteException{
-        System.out.println("New message: " + message);
+    public synchronized void retrieveMessage(String message) throws RemoteException{
+        System.out.println("New message: " + message); // Message Interface
     }
 
     @Override
-    public void initiateCanvas(String operator, DrawBoard drawBoard) throws RemoteException{
+    public synchronized void initiateCanvas(String operator, DrawBoard drawBoard) throws RemoteException{
         this.drawBoard.copyDrawBoard(operator, drawBoard);
     }
 
     @Override
-    public void initiateChatBox(ArrayList<JSONObject> msgObjs) throws RemoteException{
+    public synchronized void initiateChatBox(ArrayList<JSONObject> msgObjs) throws RemoteException{
         this.whiteBoard.initiateChatBox(msgObjs);
     }
 
     @Override
-    public void addChat(JSONObject msgObj) throws RemoteException{
+    public synchronized void addChat(JSONObject msgObj) throws RemoteException{
         this.whiteBoard.remoteAddChat(msgObj);
     }
 
     @Override
-    public void addShape(String operator, Shape shape, Color color) throws RemoteException{
+    public synchronized void addShape(String operator, Shape shape, Color color) throws RemoteException{
         drawBoard.remoteAddShape(operator, shape, color);
     }
 
     @Override
-    public void addText(String operator, String text, Point point, Color color, int fontsize) throws RemoteException{
+    public synchronized void addText(String operator, String text, Point point, Color color, int fontsize) throws RemoteException{
         drawBoard.remoteAddText(operator, text, point, color, fontsize);
     }
 
     @Override
-    public void deleteShape(String operator, int index) throws RemoteException{
+    public synchronized void deleteShape(String operator, int index) throws RemoteException{
         drawBoard.remoteDeleteShape(operator, index);
     }
 
     @Override
-    public void deleteText(String operator, int index) throws RemoteException{
+    public synchronized void deleteText(String operator, int index) throws RemoteException{
         drawBoard.remoteDeleteText(operator, index);
     }
 
     @Override
-    public void clearDrawBoard(String operator) throws RemoteException{
+    public synchronized void clearDrawBoard(String operator) throws RemoteException{
         drawBoard.remoteClearDrawBoard(operator);
     }
 
     @Override
-    public void setUserList(String user, int action) throws RemoteException {
+    public synchronized void setUserList(String user, int action) throws RemoteException {
         if (userName.equals(user) && action == 0) {
             new Thread(new Runnable() {
                 @Override
@@ -80,7 +80,7 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void userNameWarning() throws RemoteException{
+    public synchronized void userNameWarning() throws RemoteException{
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -90,7 +90,7 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void serverClosed() throws RemoteException{
+    public synchronized void serverClosed() throws RemoteException{
         new Thread(new Runnable() {
             @Override
             public void run() {

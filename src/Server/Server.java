@@ -15,7 +15,7 @@ public class Server {
     private WhiteBoard whiteBoard;
     private Registry registry;
     private RemoteServer remoteServer;
-    public static final int MODE_CREATE = 0;
+    public static final int MODE = 0;
 
     public Server(String serverAddress, int serverPort, String userName)
             throws RemoteException, AlreadyBoundException{
@@ -27,7 +27,7 @@ public class Server {
     }
 
     public void createWhiteboard(){
-        this.whiteBoard = new WhiteBoard(userName, MODE_CREATE);
+        this.whiteBoard = new WhiteBoard(userName, MODE);
     }
 
     public void createInternet() throws RemoteException, AlreadyBoundException{

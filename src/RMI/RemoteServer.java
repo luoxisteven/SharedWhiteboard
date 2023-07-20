@@ -26,7 +26,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void register(String userName, IRemoteClient client) throws RemoteException {
+    public synchronized void register(String userName, IRemoteClient client) throws RemoteException {
         if (!userList.contains(userName)){
             userList.add(userName);
             clientMap.put(userName, client);
@@ -40,7 +40,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void unicastMessage(String userName, String message) throws RemoteException {
+    public synchronized void unicastMessage(String userName, String message) throws RemoteException {
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
             client.retrieveMessage(message);
@@ -48,14 +48,14 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void broadcastMessage(String message) throws RemoteException {
+    public synchronized void broadcastMessage(String message) throws RemoteException {
         for (String userName : userList) {
             unicastMessage(userName, message);
         }
     }
 
     @Override
-    public void initiateDrawBoard(String operator, String userName) throws RemoteException{
+    public synchronized void initiateDrawBoard(String operator, String userName) throws RemoteException{
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
             client.initiateCanvas(operator, drawBoard);
@@ -63,14 +63,14 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void initiateChatBox(String userName) throws RemoteException{
+    public synchronized void initiateChatBox(String userName) throws RemoteException{
         IRemoteClient client = clientMap.get(userName);
         if (client != null) {
             client.initiateChatBox(whiteBoard.getMsgObjs());
         }
     }
 
-    public void addChat(ArrayList<String> userList, JSONObject chatObj) throws RemoteException{
+    public synchronized void addChat(ArrayList<String> userList, JSONObject chatObj) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
             if (client != null) {
@@ -79,7 +79,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         }
     }
 
-    public void userAddChat(String userName, JSONObject chatObj) throws RemoteException{
+    public synchronized void userAddChat(String userName, JSONObject chatObj) throws RemoteException{
         if (!userName.equals(this.userName)){
             whiteBoard.remoteAddChat(chatObj);
         }
@@ -88,9 +88,8 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         this.addChat(userList,chatObj);
     }
 
-    //TODO: Synchronized
     @Override
-    public void addShape(String operator, Shape shape, Color color,
+    public synchronized void addShape(String operator, Shape shape, Color color,
                          ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -101,7 +100,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void userAddShape(String operator, Shape shape, Color color) throws RemoteException{
+    public synchronized void userAddShape(String operator, Shape shape, Color color) throws RemoteException{
         if (!operator.equals(this.userName)){
             drawBoard.remoteAddShape(operator, shape, color);
         }
@@ -111,7 +110,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void addText(String operator, String text, Point point, Color color,
+    public synchronized void addText(String operator, String text, Point point, Color color,
                         int fontsize, ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -122,7 +121,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void userAddText(String operator, String text, Point point,
+    public synchronized void userAddText(String operator, String text, Point point,
                             Color color, int fontsize) throws RemoteException{
         if (!operator.equals(this.userName)){
             drawBoard.remoteAddText(operator, text, point, color, fontsize);
@@ -133,7 +132,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void deleteShape(String operator, int index, ArrayList<String> userList) throws RemoteException{
+    public synchronized void deleteShape(String operator, int index, ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
             if (client != null) {
@@ -143,7 +142,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void userDeleteShape(String operator, int index) throws RemoteException{
+    public synchronized void userDeleteShape(String operator, int index) throws RemoteException{
         if (!operator.equals(this.userName)){
             drawBoard.remoteDeleteShape(operator, index);
         }
@@ -153,7 +152,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void deleteText(String operator, int index,
+    public synchronized void deleteText(String operator, int index,
                            ArrayList<String> userList) throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
@@ -164,7 +163,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void userDeleteText(String operator, int index) throws RemoteException{
+    public synchronized void userDeleteText(String operator, int index) throws RemoteException{
         if (!operator.equals(this.userName)){
             drawBoard.remoteDeleteText(operator, index);
         }
@@ -174,7 +173,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void clearDrawBoard(String operator, ArrayList<String> userList) throws RemoteException {
+    public synchronized void clearDrawBoard(String operator, ArrayList<String> userList) throws RemoteException {
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
             if (client != null) {
@@ -184,7 +183,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void userClearDrawBoard(String operator) throws RemoteException{
+    public synchronized void userClearDrawBoard(String operator) throws RemoteException{
         if (!operator.equals(this.userName)){
             drawBoard.remoteClearDrawBoard(operator);
         }
@@ -203,7 +202,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void kickOutUser(String user) throws RemoteException {
+    public synchronized void kickOutUser(String user) throws RemoteException {
         IRemoteClient kickOutClient = clientMap.get(user);
         kickOutClient.setUserList(user, 0);
         userList.remove(user);
@@ -223,7 +222,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void serverClosed() throws RemoteException{
+    public synchronized void serverClosed() throws RemoteException{
         for (String userName: userList){
             IRemoteClient client = clientMap.get(userName);
             if (client != null) {
@@ -233,7 +232,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     }
 
     @Override
-    public void clientClosed(String operator) throws RemoteException{
+    public synchronized void clientClosed(String operator) throws RemoteException{
         userList.remove(operator);
         clientMap.remove(operator);
         for (String userName: userList){

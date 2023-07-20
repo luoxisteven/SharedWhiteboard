@@ -1,10 +1,8 @@
 package Client;
 
-import RMI.*;
 import Whiteboard.WhiteBoard;
 
-import javax.swing.*;
-import java.rmi.AlreadyBoundException;
+import RMI.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -15,7 +13,7 @@ public class Client {
     private String serverAddress;
     private int serverPort;
     private String userName;
-    public static final int mode = 1;
+    public static final int MODE = 1;
     private WhiteBoard whiteBoard;
     private Registry registry;
     private IRemoteServer remoteServer;
@@ -30,7 +28,7 @@ public class Client {
     }
 
     private void createWhiteboard(){
-        whiteBoard = new WhiteBoard(userName, mode);
+        whiteBoard = new WhiteBoard(userName, MODE);
     }
 
     private void createInternet() throws RemoteException, NotBoundException{
