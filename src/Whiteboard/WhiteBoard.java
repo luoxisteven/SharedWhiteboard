@@ -3,7 +3,7 @@ package Whiteboard;
 import RMI.*;
 import org.json.simple.JSONObject;
 
-import javax.imageio.ImageIO;
+import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,17 +11,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import javax.imageio.ImageIO;
 import javax.swing.border.Border;
 import javax.swing.BorderFactory;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class WhiteBoard extends JFrame implements Serializable {
+public class WhiteBoard extends JFrame{
     private DrawBoard drawBoard;
     private JTextArea chatArea;
     private JList<String> userJList;
@@ -39,24 +39,30 @@ public class WhiteBoard extends JFrame implements Serializable {
         } else {
             setTitle("Shared Whiteboard Client: " + userName);
         }
-
-        this.drawBoard = new DrawBoard(userName, mode);
-        JPanel controlPanel = createControlPanel();
-        JPanel chatPanel = createChatPanel();
-        JScrollPane userPane = createUsersPane();
-
-        controlPanel.add(userPane);
-        add(drawBoard);
-        add(controlPanel, BorderLayout.WEST);
-        add(chatPanel, BorderLayout.EAST);
-
-        if (mode==0){
-            controlPanel.add(createKickOutButton());
-            setJMenuBar(createMenuBar());
-        }
-
         setSize(1100, 600);
         setLocationRelativeTo(null);
+
+        // Draw Board
+        this.drawBoard = new DrawBoard(userName, mode);
+        add(drawBoard);
+
+        // West Panel
+        JPanel westPanel = new JPanel(); // New west panel that will contain controlPanel and usersPane
+//        westPanel.setSize(110,getHeight());
+        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS)); // Set layout to BoxLayout
+        JPanel controlPanel = createControlPanel();
+        JScrollPane usersPanel = createUsersPanel();
+        if (mode==0){
+            setJMenuBar(createMenuBar());
+        }
+        westPanel.add(controlPanel);
+        westPanel.add(usersPanel);
+        add(westPanel, BorderLayout.WEST);
+
+        // Chat Panel
+        JPanel chatPanel = createChatPanel();
+        add(chatPanel, BorderLayout.EAST);
+
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -73,13 +79,12 @@ public class WhiteBoard extends JFrame implements Serializable {
         });
 
         setVisible(true);
-
         drawBoard.setUserJList(userJList);
     }
 
     private JPanel createControlPanel() {
         JPanel controlPanel = new JPanel();
-        controlPanel.setPreferredSize(new Dimension(110, getHeight()));
+        controlPanel.setPreferredSize(new Dimension(100, 260));
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 
         // create a titled border with the title "Tools"
@@ -411,8 +416,11 @@ public class WhiteBoard extends JFrame implements Serializable {
         chatArea.setText(chat + "\n\n");
     }
 
-    public JScrollPane createUsersPane(){
+    public JScrollPane createUsersPanel(){
         try {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+
             if (remoteServer!=null){
                 userJList = new JList<>(remoteServer.getUserList().toArray(new String[0]));
             } else {
@@ -421,7 +429,22 @@ public class WhiteBoard extends JFrame implements Serializable {
             }
             userJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Allow only single selection
             userJList.setFixedCellWidth(100); // Set a fixed cell width
-            JScrollPane usersPane = new JScrollPane(userJList); // Add scroll pane to the user list
+
+            panel.add(userJList, BorderLayout.CENTER);
+
+            if (mode==0){
+                JButton kickOutButton = createKickOutButton();
+                panel.add(kickOutButton, BorderLayout.SOUTH);
+            }
+
+            JScrollPane usersPane = new JScrollPane(panel); // Add scroll pane to the user list
+            // create a titled border with the title "Users"
+            Border titledBorder = BorderFactory.createTitledBorder("Users");
+            usersPane.setBorder(titledBorder);  // add the border to the panel
+
+            // Set the preferred width of usersPane
+            usersPane.setPreferredSize(new Dimension(30, usersPane.getPreferredSize().height));
+
             return usersPane;
         } catch (RemoteException e){
             throw new RuntimeException(e);

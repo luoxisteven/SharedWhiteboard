@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawBoard extends JPanel implements Serializable {
+public class DrawBoard extends JPanel{
     private int x1, y1, x2, y2;
     private String shape = "Pencil";
     private JTextField textField = new JTextField();
