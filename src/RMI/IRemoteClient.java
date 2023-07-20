@@ -19,4 +19,6 @@ public interface IRemoteClient extends Remote {
     void deleteText(String operator, int index) throws RemoteException;
     void clearDrawBoard(String operator) throws RemoteException;
     void setUserList(String user, int action) throws RemoteException;
+    void userNameWarning() throws RemoteException;
+    public void serverClosed() throws RemoteException;
 }

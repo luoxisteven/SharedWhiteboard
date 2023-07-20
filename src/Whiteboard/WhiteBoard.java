@@ -3,17 +3,23 @@ package Whiteboard;
 import RMI.*;
 import org.json.simple.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.border.Border;
 import javax.swing.BorderFactory;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class WhiteBoard extends JFrame implements Serializable {
     private DrawBoard drawBoard;
@@ -27,7 +33,12 @@ public class WhiteBoard extends JFrame implements Serializable {
     public WhiteBoard(String userName, int mode) {
         this.userName = userName;
         this.mode = mode;
-        setTitle("Shared Whiteboard Server: " + userName);
+
+        if (mode ==0){
+            setTitle("Shared Whiteboard Server: " + userName);
+        } else {
+            setTitle("Shared Whiteboard Client: " + userName);
+        }
 
         this.drawBoard = new DrawBoard(userName, mode);
         JPanel controlPanel = createControlPanel();
@@ -46,7 +57,21 @@ public class WhiteBoard extends JFrame implements Serializable {
 
         setSize(1100, 600);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if(mode==0){
+                    serverClose();
+                } else if(mode==1){
+                    clientClose();
+                } else{
+                    System.gc();
+                    System.exit(0);
+                }
+            }
+        });
+
         setVisible(true);
 
         drawBoard.setUserJList(userJList);
@@ -200,14 +225,12 @@ public class WhiteBoard extends JFrame implements Serializable {
         JMenu fileMenu = new JMenu("  File  ");
 
         // create menu items
-        JMenuItem openItem = new JMenuItem("Open");
-        JMenuItem saveItem = new JMenuItem("Save");
-        JMenuItem saveAsItem = new JMenuItem("Save As");
+        JMenuItem loadItem = createLoadItem();
+        JMenuItem saveItem = createSaveItem();
 
         // add items to 'File' menu
-        fileMenu.add(openItem);
+        fileMenu.add(loadItem);
         fileMenu.add(saveItem);
-        fileMenu.add(saveAsItem);
 
         // add menus to menu bar
         menuBar.add(fileMenu);
@@ -233,7 +256,7 @@ public class WhiteBoard extends JFrame implements Serializable {
         closeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                serverClose();
             }
         });
 
@@ -241,6 +264,137 @@ public class WhiteBoard extends JFrame implements Serializable {
         controlMenu.add(closeItem);
         return controlMenu;
     }
+
+    public JMenuItem createLoadItem(){
+        JMenuItem loadItem = new JMenuItem("Load");
+        loadItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    JFileChooser fileChooser = new JFileChooser();
+                    FileNameExtensionFilter serFilter =
+                            new FileNameExtensionFilter("SER Files (*.ser)", "ser");
+                    fileChooser.addChoosableFileFilter(serFilter);
+                    fileChooser.setAcceptAllFileFilterUsed(false);
+                    int returnVal = fileChooser.showOpenDialog(null);
+                    if(returnVal == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+
+                        // Get the selected file extension
+                        String selectedExtension = selectedFilter.getExtensions()[0];
+                        if (selectedExtension.toLowerCase().equals("ser")) {
+                            loadFromSer(selectedFile.getAbsolutePath());
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Unsupported file format");
+                        }
+                    }
+                    for (String user: remoteServer.getUserList()){
+                        remoteServer.initiateDrawBoard(userName, user);
+                    }
+                    userJList.setSelectedValue(userName,true);
+                } catch (RemoteException ex){
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        return loadItem;
+    }
+
+    private void loadFromSer(String filePath) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath));
+            drawBoard.setShapes((List<Shape>) in.readObject());
+            drawBoard.setShapeColors((List<Color>) in.readObject());
+            drawBoard.setTexts((List<String>) in.readObject());
+            drawBoard.setTextColors((List<Color>) in.readObject());
+            drawBoard.setTextPoints((List<Point>) in.readObject());
+            drawBoard.setTextFontSizes((List<Integer>) in.readObject());
+            drawBoard.repaint();
+            in.close();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public JMenuItem createSaveItem(){
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter serFilter =
+                        new FileNameExtensionFilter("SER Files (*.ser)", "ser");
+                FileNameExtensionFilter pngFilter =
+                        new FileNameExtensionFilter("PNG Images (*.png)", "png");
+                FileNameExtensionFilter jpgFilter =
+                        new FileNameExtensionFilter("JPG Images (*.jpg)", "jpg");
+
+                fileChooser.addChoosableFileFilter(serFilter);
+                fileChooser.addChoosableFileFilter(pngFilter);
+                fileChooser.addChoosableFileFilter(jpgFilter);
+
+                // Disable the "All Files" filter.
+                fileChooser.setAcceptAllFileFilterUsed(false);
+
+                int returnVal = fileChooser.showSaveDialog(null);
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+
+                    // Get the selected file extension
+                    String selectedExtension = selectedFilter.getExtensions()[0];
+
+                    // Append extension if not present
+                    String filePath = selectedFile.getAbsolutePath();
+                    if (!filePath.endsWith("." + selectedExtension)) {
+                        filePath += "." + selectedExtension;
+                    }
+
+                    switch (selectedExtension.toLowerCase()) {
+                        case "ser":
+                            saveAsSer(filePath);
+                            break;
+                        case "png":
+                        case "jpg":
+                            saveAsImage(filePath, selectedExtension);
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "Unsupported file format");
+                    }
+                }
+            }
+        });
+        return saveItem;
+    }
+
+    private void saveAsSer(String filePath) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath));
+            out.writeObject(drawBoard.getShapes());
+            out.writeObject(drawBoard.getShapeColors());
+            out.writeObject(drawBoard.getTexts());
+            out.writeObject(drawBoard.getTextColors());
+            out.writeObject(drawBoard.getTextPoints());
+            out.writeObject(drawBoard.getTextFontSizes());
+            out.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveAsImage(String filePath, String extension) {
+        BufferedImage image = new BufferedImage(drawBoard.getWidth(), drawBoard.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        drawBoard.paint(g2d);
+        g2d.dispose();
+        try {
+            ImageIO.write(image, extension, new File(filePath));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
     public void initiateChatBox(ArrayList<JSONObject> msgObjs){
         this.msgObjs = msgObjs;
@@ -307,6 +461,22 @@ public class WhiteBoard extends JFrame implements Serializable {
         System.exit(0);
     }
 
+    public void userNameWarning(){
+        JOptionPane.showMessageDialog(null,
+                "This username is already in use. Please try a different one.",
+                "Warning", JOptionPane.ERROR_MESSAGE);
+        System.gc();
+        System.exit(0);
+    }
+
+    public void serverCloseWarning(){
+        JOptionPane.showMessageDialog(null,
+                "The host has terminated the whiteboard session.",
+                "Session Ended", JOptionPane.INFORMATION_MESSAGE);
+        System.gc();
+        System.exit(0);
+    }
+
     public ArrayList<JSONObject> getMsgObjs() {
         return msgObjs;
     }
@@ -328,6 +498,30 @@ public class WhiteBoard extends JFrame implements Serializable {
                     userJList.setSelectedValue(selectedUser, true);
                 }
             }
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void serverClose(){
+        try{
+            if(remoteServer!=null){
+                remoteServer.serverClosed();
+            }
+            System.gc();
+            System.exit(0);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void clientClose(){
+        try {
+            if (remoteServer != null) {
+                remoteServer.clientClosed(userName);
+            }
+            System.gc();
+            System.exit(0);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

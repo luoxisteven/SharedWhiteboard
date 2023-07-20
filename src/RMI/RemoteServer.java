@@ -35,7 +35,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
             initiateDrawBoard(this.userName, userName);
             initiateChatBox(userName);
         } else{
-
+            client.userNameWarning();
         }
     }
 
@@ -222,4 +222,25 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         return userList;
     }
 
+    @Override
+    public void serverClosed() throws RemoteException{
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.serverClosed();
+            }
+        }
+    }
+
+    @Override
+    public void clientClosed(String operator) throws RemoteException{
+        userList.remove(operator);
+        clientMap.remove(operator);
+        for (String userName: userList){
+            IRemoteClient client = clientMap.get(userName);
+            if (client != null) {
+                client.setUserList(operator, 0);
+            }
+        }
+    }
 }

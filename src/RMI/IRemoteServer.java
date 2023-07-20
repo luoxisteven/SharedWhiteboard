@@ -28,5 +28,6 @@ public interface IRemoteServer extends Remote {
     void clearDrawBoard(String operator, ArrayList<String> userList) throws RemoteException;
     void userClearDrawBoard(String userName) throws RemoteException;
     void kickOutUser(String user) throws RemoteException;
-
+    void serverClosed() throws RemoteException;
+    void clientClosed(String operator) throws RemoteException;
 }

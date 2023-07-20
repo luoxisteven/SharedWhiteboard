@@ -23,12 +23,12 @@ public class DrawBoard extends JPanel implements Serializable {
     private Color currentColor = Color.BLACK;
     private int currentFontSize = 12;
     private transient Graphics2D g2;
-    private java.util.List<Color> shapeColors = new ArrayList<>();
-    private java.util.List<Color> textColors = new ArrayList<>();
-    private java.util.List<Shape> shapes = new ArrayList<>();
-    private java.util.List<String> texts = new ArrayList<>();
+    private List<Color> shapeColors = new ArrayList<>();
+    private List<Color> textColors = new ArrayList<>();
+    private List<Shape> shapes = new ArrayList<>();
+    private List<String> texts = new ArrayList<>();
     private List<Point> textPoints = new ArrayList<>();
-    private java.util.List<Integer> textFontSizes = new ArrayList<>();
+    private List<Integer> textFontSizes = new ArrayList<>();
     private JList<String> userJList;
     private static final double THRESHOLD = 1.0; // Distance Threshold for erasing
     private String userName;
@@ -294,6 +294,30 @@ public class DrawBoard extends JPanel implements Serializable {
 
     public List<Integer> getTextFontSizes() {
         return textFontSizes;
+    }
+
+    public void setShapeColors(List<Color> shapeColors) {
+        this.shapeColors = shapeColors;
+    }
+
+    public void setTextColors(List<Color> textColors) {
+        this.textColors = textColors;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
+    }
+
+    public void setTexts(List<String> texts) {
+        this.texts = texts;
+    }
+
+    public void setTextPoints(List<Point> textPoints) {
+        this.textPoints = textPoints;
+    }
+
+    public void setTextFontSizes(List<Integer> textFontSizes) {
+        this.textFontSizes = textFontSizes;
     }
 
     public List<Point> getTextPoints() {

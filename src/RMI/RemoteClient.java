@@ -66,16 +66,36 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
-    public void setUserList(String user, int action) throws RemoteException{
-        if (userName.equals(user)&& action == 0){
+    public void setUserList(String user, int action) throws RemoteException {
+        if (userName.equals(user) && action == 0) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     whiteBoard.beingKickedOff();
                 }
             }).start();
-        } else{
+        } else {
             whiteBoard.setUserJList();
         }
+    }
+
+    @Override
+    public void userNameWarning() throws RemoteException{
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                whiteBoard.userNameWarning();
+            }
+        }).start();
+    }
+
+    @Override
+    public void serverClosed() throws RemoteException{
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                whiteBoard.serverCloseWarning();
+            }
+        }).start();
     }
 }

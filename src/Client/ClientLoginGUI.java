@@ -20,7 +20,7 @@ public class ClientLoginGUI extends JFrame implements ActionListener {
     private JTextField portField;
     private JTextField nameField;
     private JButton loginButton;
-    private static final String GUITitle = "Shared Whiteboard Server @Xi Luo, 1302954";
+    private static final String GUITitle = "Shared Whiteboard Client @Xi Luo, 1302954";
     private static final String developerInfo = "Developed by Xi Luo, 1302954";
     private static final String taskInfo = "COMP90015 Distributed Systems";
     private static final String copyrightInfo = "@Copyright: The University of Melbourne";
