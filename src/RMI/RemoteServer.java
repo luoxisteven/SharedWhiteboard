@@ -35,7 +35,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
             initiateDrawBoard(this.userName, userName);
             initiateChatBox(userName);
         } else{
-            // TODO: 用户名重复
+
         }
     }
 

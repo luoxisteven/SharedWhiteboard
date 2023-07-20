@@ -1,5 +1,8 @@
 package Client;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
 public class JoinWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
     public static final int DEFAULT_PORT = 4444;
@@ -27,13 +30,21 @@ public class JoinWhiteBoard {
     }
 
     private void createClient(){
-        Client client = new Client(serverAddress,serverPort,userName);
+        try {
+            Client client = new Client(serverAddress,serverPort,userName);
+        } catch (RemoteException | NotBoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void clientLogin(){
+        ClientLoginGUI clientLoginGUI = new ClientLoginGUI(serverAddress,serverPort,userName);
     }
 
     public static void main(String[] args){
         JoinWhiteBoard joinWhiteBoard = new JoinWhiteBoard();
         joinWhiteBoard.parseArgs(args);
-        joinWhiteBoard.createClient();
+        joinWhiteBoard.clientLogin();
     }
 
 }

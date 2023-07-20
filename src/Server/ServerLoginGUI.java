@@ -1,8 +1,10 @@
 package Server;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+        import javax.swing.*;
+        import java.awt.event.ActionEvent;
+        import java.awt.event.ActionListener;
+        import java.rmi.AlreadyBoundException;
+        import java.rmi.RemoteException;
 
 /**
  * Server Login GUI
@@ -18,17 +20,15 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
     private JTextField portField;
     private JTextField nameField;
     private JButton loginButton;
-
+    private static final String GUITitle = "Shared Whiteboard Server @Xi Luo, 1302954";
     private static final String developerInfo = "Developed by Xi Luo, 1302954";
     private static final String taskInfo = "COMP90015 Distributed Systems";
     private static final String copyrightInfo = "@Copyright: The University of Melbourne";
     private static final String timeInfo = "2023.5";
-    private Server server;
 
-    public ServerLoginGUI(String IP, int port, String userName, Server server) {
+    public ServerLoginGUI(String address, int port, String userName) {
 
-        super("Shared Whiteboard Server @Xi Luo, 1302954");
-        this.server = server;
+        super(GUITitle);
 
         // Create IP address label
         JLabel ipLabel = new JLabel("Server IP :");
@@ -36,7 +36,7 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
         add(ipLabel);
 
         // Create IP address text field
-        ipField = new JTextField(IP);
+        ipField = new JTextField(address);
         ipField.setBounds(80, 120, 200, 30);
         add(ipField);
 
@@ -86,6 +86,7 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
         timeLabel.setBounds(400, 360, 300, 20);
         add(timeLabel);
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 500);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -94,13 +95,27 @@ public class ServerLoginGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Login with the IP address and port of the server
-        String ip = ipField.getText();
-        int port = Integer.parseInt(portField.getText());
-        if (e.getSource() == loginButton) {
-            {
-
+        String userName = nameField.getText();
+        String serverAddress = ipField.getText();
+        try {
+            int serverPort = Integer.parseInt(portField.getText());
+            if (e.getSource() == loginButton) {
+                try {
+                    new Server(serverAddress,serverPort,userName);
+                    dispose();
+                    // Provide user feedback on success
+                } catch (RemoteException | AlreadyBoundException ex) {
+                    JOptionPane.showMessageDialog(null,
+                            "Please check for the IP and Port for the server.\n",
+                            "Failed to create server", JOptionPane.ERROR_MESSAGE);
+                }
             }
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null,
+                    "Please enter a valid number for the server port.\n",
+                    "Invalid Port Number", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
 }

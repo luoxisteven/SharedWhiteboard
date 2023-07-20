@@ -3,6 +3,8 @@ package Client;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 /**
  * Client Login GUI
@@ -18,18 +20,15 @@ public class ClientLoginGUI extends JFrame implements ActionListener {
     private JTextField portField;
     private JTextField nameField;
     private JButton loginButton;
-
+    private static final String GUITitle = "Shared Whiteboard Server @Xi Luo, 1302954";
     private static final String developerInfo = "Developed by Xi Luo, 1302954";
     private static final String taskInfo = "COMP90015 Distributed Systems";
     private static final String copyrightInfo = "@Copyright: The University of Melbourne";
     private static final String timeInfo = "2023.5";
-    private Client clientSocket;
 
-    public ClientLoginGUI(String IP, int port, String userName, Client clientSocket) {
+    public ClientLoginGUI(String IP, int port, String userName) {
 
-        super("Shared Whiteboard Client @Xi Luo, 1302954");
-
-        this.clientSocket = clientSocket;
+        super(GUITitle);
 
         // Create IP address label
         JLabel ipLabel = new JLabel("Server IP :");
@@ -95,21 +94,25 @@ public class ClientLoginGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Login with the IP address and port of the server
-        String ip = ipField.getText();
-        int port = Integer.parseInt(portField.getText());
-        if (e.getSource() == loginButton){
-//            if (clientSocket.login(ip,port,nameField.getText())){
-//                this.whiteboard.createWhiteboard(nameField.getText(),clientSocket);
-//                dispose();
-//            } else{
-//                // Login Failed GUI
-//                JOptionPane.showMessageDialog(null,
-//                        "Please check for the IP and Port for the server.\n" +
-//                                "Or maybe the Server is offline.",
-//                        "Login failed", JOptionPane.ERROR_MESSAGE);
-//            }
+        String userName = nameField.getText();
+        String serverAddress = ipField.getText();
+        try {
+            int serverPort = Integer.parseInt(portField.getText());
+            if (e.getSource() == loginButton) {
+                try {
+                    new Client(serverAddress,serverPort,userName);
+                    dispose();
+                } catch (RemoteException | NotBoundException ex) {
+                    JOptionPane.showMessageDialog(null,
+                            "Please check for the IP and Port for the server.\n" +
+                                    "Or maybe the Server is offline.",
+                            "Login failed", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null,
+                    "Please enter a valid number for the server port.\n",
+                    "Invalid Port Number", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 }

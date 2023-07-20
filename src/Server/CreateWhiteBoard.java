@@ -1,5 +1,8 @@
 package Server;
 
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+
 public class CreateWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
     public static final int DEFAULT_PORT = 4444;
@@ -26,13 +29,22 @@ public class CreateWhiteBoard {
     }
 
     private void createSever(){
-        Server server = new Server(serverAddress, serverPort, userName);
+        try {
+            Server server = new Server(serverAddress, serverPort, userName);
+            System.out.println("Server created successfully!");
+        } catch (RemoteException | AlreadyBoundException e) {
+            System.out.println("Failed to create server: " + e.getMessage());
+        }
+    }
+
+    private void serverLogin(){
+        ServerLoginGUI serverLoginGUI = new ServerLoginGUI(serverAddress, serverPort, userName);
     }
 
     public static void main(String args[]) {
         CreateWhiteBoard createWhiteBoard = new CreateWhiteBoard();
         createWhiteBoard.parseArgs(args);
-        createWhiteBoard.createSever();
+        createWhiteBoard.serverLogin();
     }
 
 }

@@ -4,6 +4,7 @@ import RMI.*;
 import Whiteboard.WhiteBoard;
 
 import javax.swing.*;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -20,7 +21,7 @@ public class Client {
     private IRemoteServer remoteServer;
     private RemoteClient remoteClient;
 
-    public Client(String serverAddress, int serverPort, String userName){
+    public Client(String serverAddress, int serverPort, String userName) throws RemoteException, NotBoundException{
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.userName = userName;
@@ -32,21 +33,14 @@ public class Client {
         whiteBoard = new WhiteBoard(userName, mode);
     }
 
-    private void createInternet(){
-        try {
+    private void createInternet() throws RemoteException, NotBoundException{
+        registry = LocateRegistry.getRegistry(serverAddress,serverPort);
+        remoteClient = new RemoteClient(userName, whiteBoard);
+        remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
+        whiteBoard.setRemoteServer(remoteServer);
+        whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
+        remoteServer.register(userName, remoteClient);
 
-            registry = LocateRegistry.getRegistry(serverAddress,serverPort);
-            remoteClient = new RemoteClient(userName, whiteBoard);
-            remoteServer = (IRemoteServer) registry.lookup("RemoteServer");
-            whiteBoard.setRemoteServer(remoteServer);
-            whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
-            remoteServer.register(userName, remoteClient);
-
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

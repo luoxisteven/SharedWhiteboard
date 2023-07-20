@@ -45,9 +45,7 @@ public class DrawBoard extends JPanel implements Serializable {
                 y1 = e.getY();
             }
             public void mouseReleased(MouseEvent e) {
-                if (!shape.equals("Pencil") || !shape.equals("Eraser")) {
-                    addShape();
-                }
+                addShape();
             }
         });
 
