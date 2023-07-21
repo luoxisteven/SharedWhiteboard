@@ -100,8 +100,8 @@ public class ClientLoginGUI extends JFrame implements ActionListener {
             int serverPort = Integer.parseInt(portField.getText());
             if (e.getSource() == loginButton) {
                 try {
-                    new Client(serverAddress,serverPort,userName);
                     dispose();
+                    new Client(serverAddress,serverPort,userName);
                 } catch (RemoteException | NotBoundException ex) {
                     JOptionPane.showMessageDialog(null,
                             "Please check for the IP and Port for the server.\n" +

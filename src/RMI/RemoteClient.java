@@ -98,6 +98,16 @@ public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     }
 
     @Override
+    public synchronized void hostDenial() throws RemoteException{
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                whiteBoard.hostDenial();
+            }
+        }).start();
+    }
+
+    @Override
     public synchronized void serverClosed() throws RemoteException{
         new Thread(new Runnable() {
             @Override

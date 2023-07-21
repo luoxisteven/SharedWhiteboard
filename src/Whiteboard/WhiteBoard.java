@@ -510,6 +510,21 @@ public class WhiteBoard extends JFrame{
         System.exit(0);
     }
 
+    public boolean joinApproval(String userName){
+        int response = JOptionPane.showConfirmDialog(null,
+                "Do you want to grant access to \"" + userName + "\"?",
+                "Access Control", JOptionPane.YES_NO_OPTION);
+        return response == JOptionPane.YES_OPTION;
+    }
+
+    public void hostDenial(){
+        JOptionPane.showMessageDialog(null,
+                "You are denial from the shared whiteboard by the host.",
+                "oDenial", JOptionPane.ERROR_MESSAGE);
+        System.gc();
+        System.exit(0);
+    }
+
     public ArrayList<JSONObject> getMsgObjs() {
         return msgObjs;
     }

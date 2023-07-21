@@ -46,5 +46,4 @@ public class Client {
         whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
         remoteServer.register(userName, remoteClient);
     }
-
 }

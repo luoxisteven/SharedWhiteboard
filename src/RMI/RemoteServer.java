@@ -37,6 +37,10 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     @Override
     public synchronized void register(String userName, IRemoteClient client) throws RemoteException {
         if (!userList.contains(userName)){
+            if (!whiteBoard.joinApproval(userName)){
+                client.hostDenial();
+                return;
+            }
             userList.add(userName);
             clientMap.put(userName, client);
             addUser(userName);
