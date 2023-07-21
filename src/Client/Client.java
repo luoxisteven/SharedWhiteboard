@@ -8,12 +8,19 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * Class Client:
+ * Create and Store whiteboard and Internet utility
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class Client {
-
     private String serverAddress;
     private int serverPort;
     private String userName;
-    public static final int MODE = 1;
+    public static final int MODE = 1; // 0 is Server, 1 is Client
     private WhiteBoard whiteBoard;
     private Registry registry;
     private IRemoteServer remoteServer;
@@ -38,7 +45,6 @@ public class Client {
         whiteBoard.setRemoteServer(remoteServer);
         whiteBoard.getDrawBoard().setRemoteServer(remoteServer);
         remoteServer.register(userName, remoteClient);
-
     }
 
 }

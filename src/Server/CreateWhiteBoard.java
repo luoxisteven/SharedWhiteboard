@@ -3,6 +3,14 @@ package Server;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 
+/**
+ * Class CreateWhiteBoard:
+ * Parse the parameters and Start Login GUI
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class CreateWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
     public static final int DEFAULT_PORT = 4444;

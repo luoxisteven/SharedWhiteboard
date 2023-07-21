@@ -11,6 +11,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class RemoteServer:
+ * Stores remoteClient, Distributes information,
+ * Allows client to conduct operation on server's whiteboard
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
     private String userName;
     private WhiteBoard whiteBoard;
@@ -39,6 +48,7 @@ public class RemoteServer extends UnicastRemoteObject implements IRemoteServer {
         }
     }
 
+    // TODO: 加密
     @Override
     public synchronized void unicastMessage(String userName, String message) throws RemoteException {
         IRemoteClient client = clientMap.get(userName);

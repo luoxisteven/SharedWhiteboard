@@ -9,6 +9,14 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
+/**
+ * Class RemoteClient:
+ * Callback by the server, allows the server to conduct operation
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class RemoteClient extends UnicastRemoteObject implements IRemoteClient {
     private String userName;
     private WhiteBoard whiteBoard;

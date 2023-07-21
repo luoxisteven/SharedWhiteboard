@@ -8,6 +8,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * Class Server:
+ * Create and Store whiteboard and Internet utility
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class Server {
     private String serverAddress;
     private int serverPort;

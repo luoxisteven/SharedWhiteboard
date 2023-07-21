@@ -5,12 +5,14 @@ import org.json.simple.JSONObject;
 
 import java.io.*;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -21,6 +23,13 @@ import javax.swing.border.Border;
 import javax.swing.BorderFactory;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Whiteboard
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class WhiteBoard extends JFrame{
     private DrawBoard drawBoard;
     private JTextArea chatArea;
@@ -36,8 +45,10 @@ public class WhiteBoard extends JFrame{
 
         if (mode ==0){
             setTitle("Shared Whiteboard Server: " + userName);
-        } else {
+        } else if (mode == 1) {
             setTitle("Shared Whiteboard Client: " + userName);
+        } else{
+            setTitle("Shared Whiteboard: " + userName);
         }
         setSize(1100, 600);
         setLocationRelativeTo(null);
@@ -48,7 +59,6 @@ public class WhiteBoard extends JFrame{
 
         // West Panel
         JPanel westPanel = new JPanel(); // New west panel that will contain controlPanel and usersPane
-//        westPanel.setSize(110,getHeight());
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS)); // Set layout to BoxLayout
         JPanel controlPanel = createControlPanel();
         JScrollPane usersPanel = createUsersPanel();

@@ -14,6 +14,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DrawBoard
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class DrawBoard extends JPanel{
     private int x1, y1, x2, y2;
     private String shape = "Pencil";

@@ -3,6 +3,15 @@ package Client;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+
+/**
+ * Class JoinWhiteBoard:
+ * Parse the parameters and Start Login GUI
+ *
+ * COMP90015 Distributed Systems, Sem1, 2023
+ * @author Xi Luo, 1302954, luoxl7@student.unimelb.edu.au
+ * @version jdk18.0.2
+ */
 public class JoinWhiteBoard {
     public static final String DEFAULT_IP = "localhost";
     public static final int DEFAULT_PORT = 4444;
@@ -10,7 +19,6 @@ public class JoinWhiteBoard {
     private String serverAddress;
     private int serverPort;
     private String userName;
-    public static final int mode = 1;
 
     private JoinWhiteBoard(){
         serverAddress = DEFAULT_IP;
