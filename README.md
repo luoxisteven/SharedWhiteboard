@@ -22,12 +22,14 @@ This project is a distributed system application designed to implement a **Share
 The system is based on a **Client-Server Model (CS-Model)**:
 - **Server**: Manages the state of the whiteboard and handles communication between all clients.
 - **Clients**: Connect to the server and receive updates in real-time.
+
 ![Picture1](/img/Picture1.jpg)
 
 ### Key Architectural Features:
 1. **Partial Consistency**: The server acts as the source of truth, but due to internet lag, clients might experience some delay.
 2. **Scalability**: The system can be scaled by upgrading the server to handle more clients.
 3. **Thread-per-Connection**: Each client connection runs on a separate thread for better performance and resource efficiency.
+
 ![Picture2](/img/Picture2.jpg)
 
 ## Communication Protocol
