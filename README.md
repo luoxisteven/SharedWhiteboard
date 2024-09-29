@@ -1,4 +1,4 @@
-# Distributed Shared Whiteboard Application
+# Distributed Shared Whiteboard
 
 ## Contributors
 - Xi Luo (luoxl7@student.unimelb.edu.au)
